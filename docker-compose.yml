@@ -1,0 +1,42 @@
+services:
+  checker-db:
+    container_name: checker-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: checker_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  liquibase:
+    image: liquibase/liquibase
+    container_name: liquibase
+    volumes:
+      - ./checker-db/src/main/resources/:/liquibase/changelog/
+    command: --url=jdbc:postgresql://checker-db:5432/checker_db --username=postgres --password=postgres --changeLogFile=./changelog/db/changelog/changelog-master.xml update
+    depends_on:
+      checker-db:
+        condition: service_healthy
+        
+  checker-service:
+    container_name: checker-service
+    build:
+#      context: checker-service/.
+      dockerfile: checker-service/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      checker-db:
+        condition: service_healthy
+    env_file: .env
+
+volumes:
+  postgres-data:

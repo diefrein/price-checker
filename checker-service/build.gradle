@@ -1,0 +1,38 @@
+plugins {
+    id "java"
+    id "application"
+}
+
+group = 'ru.diefrein.pricechecker'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jsoup:jsoup:$jsoupVersion"
+    implementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
+    implementation 'com.microsoft.playwright:playwright:1.44.0' // todo remove
+    implementation "org.postgresql:postgresql:$postgresVersion"
+    implementation "com.zaxxer:HikariCP:$hikaryVersion"
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+}
+
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "ru.diefrein.pricechecker.Application"
+        )
+    }
+}
+
+application {
+    mainClass = "ru.diefrein.pricechecker.Application"
+}
+
+test {
+    useJUnitPlatform()
+}

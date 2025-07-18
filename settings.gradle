@@ -1,2 +1,5 @@
 rootProject.name = 'price-checker'
+include 'checker-service'
+include 'checker-db'
+include 'telegram-bot'
 

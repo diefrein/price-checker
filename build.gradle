@@ -6,50 +6,37 @@ plugins {
 group = "ru.diefrein.pricechecker"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+    apply plugin: "java"
+    apply plugin: "application"
 
-ext {
-    postgresVersion = "42.7.7"
-    hikaryVersion = "6.3.0"
-    jacksonVersion = "2.19.1"
-    lombokVersion = "1.18.38"
-    slf4jVersion = "2.0.17"
-    logbackVersion = "1.5.18"
-    junitVersion = "5.9.1"
-}
-
-dependencies {
-    implementation "org.postgresql:postgresql:$postgresVersion"
-    implementation "com.zaxxer:HikariCP:$hikaryVersion"
-
-    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-
-    compileOnly "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-
-    implementation "org.slf4j:slf4j-api:$slf4jVersion"
-    implementation "ch.qos.logback:logback-classic:$logbackVersion"
-
-    testImplementation platform("org.junit:junit-bom:$junitVersion")
-    testImplementation "org.junit.jupiter:junit-jupiter"
-}
-
-jar {
-    manifest {
-        attributes(
-                "Main-Class": "ru.diefrein.pricechecker.Application"
-        )
+    repositories {
+        mavenCentral()
     }
-}
 
-application {
-    mainClass = "ru.diefrein.pricechecker.Application"
-}
+    ext {
+        postgresVersion = "42.7.7"
+        hikaryVersion = "6.3.0"
+        jacksonVersion = "2.19.1"
+        slf4jVersion = "2.0.17"
+        logbackVersion = "1.5.18"
+        junitVersion = "5.9.1"
 
-test {
-    useJUnitPlatform()
+        jsoupVersion = "1.21.1"
+        seleniumVersion = "4.34.0"
+
+        liquibaseVersion = "4.25.0"
+        liquibaseGradleVersion = "2.2.0"
+
+        jakartaXmlVersion = "4.0.1"
+        picocliVersion = "4.7.5"
+    }
+
+    dependencies {
+        implementation "org.slf4j:slf4j-api:$slf4jVersion"
+        implementation "ch.qos.logback:logback-classic:$logbackVersion"
+
+        testImplementation platform("org.junit:junit-bom:$junitVersion")
+        testImplementation "org.junit.jupiter:junit-jupiter"
+    }
 }
