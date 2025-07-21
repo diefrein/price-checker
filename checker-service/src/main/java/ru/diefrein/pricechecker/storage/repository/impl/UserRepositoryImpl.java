@@ -1,5 +1,7 @@
 package ru.diefrein.pricechecker.storage.repository.impl;
 
+import ru.diefrein.pricechecker.storage.dto.Page;
+import ru.diefrein.pricechecker.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.storage.repository.UserRepository;
@@ -60,6 +62,24 @@ public class UserRepositoryImpl implements UserRepository {
                     }
                 }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Page<User> findActiveUsers(Connection conn, PageRequest pageRequest) {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_ACTIVE_USERS_PAGE_STATEMENT)) {
+            stmt.setLong(1, pageRequest.pageSize() + 1);
+            stmt.setLong(2, (pageRequest.pageNumber() - 1) * pageRequest.pageSize());
+            ResultSet rs = stmt.executeQuery();
+
+            List<User> users = new ArrayList<>();
+            while (rs.next() && users.size() < pageRequest.pageSize()) {
+                users.add(map(rs));
+            }
+
+            return new Page<>(users, new Page.PageMeta(rs.next()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

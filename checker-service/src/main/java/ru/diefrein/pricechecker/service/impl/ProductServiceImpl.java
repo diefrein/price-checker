@@ -2,9 +2,12 @@ package ru.diefrein.pricechecker.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.diefrein.pricechecker.configuration.parameters.ProductServiceParameterProvider;
 import ru.diefrein.pricechecker.service.ProductParser;
 import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.service.dto.ParsedProduct;
+import ru.diefrein.pricechecker.storage.dto.Page;
+import ru.diefrein.pricechecker.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
@@ -72,27 +75,45 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void checkForUpdatesInTransaction(Connection conn) {
-        List<User> activeUsers = userRepository.findActiveUsers(conn);
-        for (User activeUser : activeUsers) {
-            processUserProducts(conn, activeUser.id());
-        }
+        int pageNumber = 1;
+        Page<User> activeUsers;
+        do {
+            activeUsers = userRepository.findActiveUsers(
+                    conn,
+                    new PageRequest(ProductServiceParameterProvider.USERS_PAGE_SIZE, pageNumber++)
+            );
+            for (User activeUser : activeUsers.data()) {
+                log.info("Finding products for user with id={}", activeUser.id());
+                processUserProducts(conn, activeUser.id());
+            }
+        } while (activeUsers.meta().hasNext());
+
     }
 
     private void processUserProducts(Connection conn, UUID userId) {
-        List<Product> products = productRepository.findByUserId(conn, userId);
+        int pageNumber = 1;
         int processedCount = 0;
-        for (Product product : products) {
-            ParsedProduct parsedProduct = parser.getProduct(product.link());
-            if (isProductInfoChanged(parsedProduct, product)) {
-                productRepository.update(
-                        conn,
-                        product.id(),
-                        parsedProduct.name(),
-                        parsedProduct.actualPrice()
-                );
-                processedCount++;
+        Page<Product> products;
+        do {
+            products = productRepository.findByUserId(
+                    conn,
+                    userId,
+                    new PageRequest(ProductServiceParameterProvider.PRODUCTS_PAGE_SIZE, pageNumber++)
+            );
+            for (Product product : products.data()) {
+                ParsedProduct parsedProduct = parser.getProduct(product.link());
+                if (isProductInfoChanged(parsedProduct, product)) {
+                    productRepository.update(
+                            conn,
+                            product.id(),
+                            parsedProduct.name(),
+                            parsedProduct.actualPrice()
+                    );
+                }
             }
-        }
+            processedCount += products.data().size();
+        } while (products.meta().hasNext());
+
         if (processedCount > 0) {
             log.info("Processed {} products for user with id={}", processedCount, userId);
         }

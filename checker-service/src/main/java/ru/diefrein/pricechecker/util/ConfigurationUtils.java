@@ -12,10 +12,10 @@ public class ConfigurationUtils {
         return env;
     }
 
-    public static String getEnv(String name, String def) {
+    public static String getEnv(String name, String defaultValue) {
         String env = System.getenv(name);
         if (StringUtil.isNullOrEmpty(env)) {
-            if (StringUtil.isNullOrEmpty(def)) {
+            if (StringUtil.isNullOrEmpty(defaultValue)) {
                 throw new IllegalStateException(
                         String.format(
                                 "Environment variable with name=%s is not set, and default is null or empty",
@@ -23,7 +23,7 @@ public class ConfigurationUtils {
                         )
                 );
             }
-            return def;
+            return defaultValue;
         }
         return env;
     }

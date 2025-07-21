@@ -2,6 +2,8 @@ package ru.diefrein.pricechecker.storage.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.diefrein.pricechecker.storage.dto.Page;
+import ru.diefrein.pricechecker.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.exception.EntityNotFoundException;
@@ -31,6 +33,9 @@ public class ProductRepositoryImpl implements ProductRepository {
             """;
     private static final String SELECT_PRODUCT_BY_USER_ID_STATEMENT = """
             SELECT * FROM checker.products WHERE user_id = ?
+            """;
+    private static final String SELECT_PRODUCT_BY_USER_ID_PAGE_STATEMENT = """
+            SELECT * FROM checker.products WHERE user_id = ? limit ? offset ?
             """;
     private static final String SELECT_PRODUCT_BY_ID_STATEMENT = """
             SELECT * FROM checker.products WHERE id = ?
@@ -148,6 +153,25 @@ public class ProductRepositoryImpl implements ProductRepository {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Page<Product> findByUserId(Connection conn, UUID userId, PageRequest pageRequest) {
+        try (PreparedStatement stmt = conn.prepareStatement(SELECT_PRODUCT_BY_USER_ID_PAGE_STATEMENT)) {
+            stmt.setObject(1, userId);
+            stmt.setLong(2, pageRequest.pageSize() + 1);
+            stmt.setLong(3, (pageRequest.pageNumber() - 1) * pageRequest.pageSize());
+            ResultSet rs = stmt.executeQuery();
+
+            List<Product> products = new ArrayList<>();
+            while (rs.next() && products.size() < pageRequest.pageSize()) {
+                products.add(map(rs));
+            }
+
+            return new Page<>(products, new Page.PageMeta(rs.next()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

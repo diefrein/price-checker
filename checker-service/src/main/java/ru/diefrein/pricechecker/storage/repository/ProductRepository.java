@@ -1,5 +1,7 @@
 package ru.diefrein.pricechecker.storage.repository;
 
+import ru.diefrein.pricechecker.storage.dto.Page;
+import ru.diefrein.pricechecker.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
 
 import java.sql.Connection;
@@ -13,6 +15,8 @@ public interface ProductRepository {
     void update(Connection conn, UUID productId, String name, Double actualPrice);
 
     List<Product> findByUserId(UUID userId);
+
+    Page<Product> findByUserId(Connection conn, UUID userId, PageRequest pageRequest);
 
     Product findById(UUID id);
 
