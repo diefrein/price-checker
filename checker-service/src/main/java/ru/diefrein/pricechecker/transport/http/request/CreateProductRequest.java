@@ -1,4 +1,4 @@
-package ru.diefrein.pricechecker.transport.request;
+package ru.diefrein.pricechecker.transport.http.request;
 
 import java.util.UUID;
 

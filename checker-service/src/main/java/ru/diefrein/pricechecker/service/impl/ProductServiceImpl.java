@@ -13,6 +13,8 @@ import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.storage.repository.ProductRepository;
 import ru.diefrein.pricechecker.storage.repository.UserRepository;
+import ru.diefrein.pricechecker.transport.kafka.dto.PriceChangeEvent;
+import ru.diefrein.pricechecker.transport.kafka.producer.PriceChangeProducer;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,15 +30,17 @@ public class ProductServiceImpl implements ProductService {
     private final DataSource dataSource;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final PriceChangeProducer priceChangeProducer;
 
     public ProductServiceImpl(ConnectionPool connectionPool,
                               ProductRepository productRepository,
                               ProductParser parser,
-                              UserRepository userRepository) {
+                              UserRepository userRepository, PriceChangeProducer priceChangeProducer) {
         this.dataSource = connectionPool.getDataSource();
         this.productRepository = productRepository;
         this.parser = parser;
         this.userRepository = userRepository;
+        this.priceChangeProducer = priceChangeProducer;
     }
 
     @Override
@@ -109,6 +113,7 @@ public class ProductServiceImpl implements ProductService {
                             parsedProduct.name(),
                             parsedProduct.actualPrice()
                     );
+                    priceChangeProducer.send(PriceChangeEvent.fromProductUpdate(product, parsedProduct));
                 }
             }
             processedCount += products.data().size();

@@ -12,4 +12,6 @@ public interface UserRepository {
     User findByTelegramId(long telegramId);
 
     List<User> findAll();
+
+    User findByCheckerUserId(UUID userId);
 }

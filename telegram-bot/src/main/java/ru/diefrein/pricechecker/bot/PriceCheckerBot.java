@@ -83,7 +83,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         sendMessage(chatId, text);
     }
 
-    private void sendMessage(Long chatId, String text) {
+    public void sendMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
         message.setText(text);

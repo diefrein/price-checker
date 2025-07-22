@@ -23,6 +23,9 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SELECT_USER_BY_TELEGRAM_ID_STATEMENT = """
             SELECT * FROM checker_bot.users WHERE telegram_id = ?
             """;
+    private static final String SELECT_USER_BY_CHECKER_ID_STATEMENT = """
+            SELECT * FROM checker_bot.users WHERE checker_user_id = ?
+            """;
     private static final String SELECT_USERS = """
             SELECT * FROM checker_bot.users
             """;
@@ -74,6 +77,20 @@ public class UserRepositoryImpl implements UserRepository {
                     users.add(map(rs));
                 }
                 return users;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public User findByCheckerUserId(UUID userId) {
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(SELECT_USER_BY_CHECKER_ID_STATEMENT)) {
+                stmt.setObject(1, userId);
+                ResultSet rs = stmt.executeQuery();
+                rs.next();
+                return map(rs);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

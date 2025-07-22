@@ -1,12 +1,12 @@
-package ru.diefrein.pricechecker.bot.transport.client;
+package ru.diefrein.pricechecker.bot.transport.http.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.diefrein.pricechecker.bot.configuration.parameters.CheckerClientParameterProvider;
-import ru.diefrein.pricechecker.bot.transport.client.dto.CheckerUser;
-import ru.diefrein.pricechecker.bot.transport.client.dto.CreateCheckerProductRequest;
-import ru.diefrein.pricechecker.bot.transport.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerUser;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

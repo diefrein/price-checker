@@ -17,6 +17,8 @@ dependencies {
     implementation "org.postgresql:postgresql:$postgresVersion"
     implementation "com.zaxxer:HikariCP:$hikaryVersion"
 
+    implementation "org.apache.kafka:kafka-clients:$kafkaVersion"
+
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
 }

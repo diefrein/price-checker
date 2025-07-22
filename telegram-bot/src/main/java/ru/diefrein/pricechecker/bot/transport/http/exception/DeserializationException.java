@@ -1,4 +1,4 @@
-package ru.diefrein.pricechecker.transport.exception;
+package ru.diefrein.pricechecker.bot.transport.http.exception;
 
 public class DeserializationException extends RuntimeException {
 

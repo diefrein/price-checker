@@ -13,6 +13,8 @@ repositories {
 dependencies {
     implementation "org.telegram:telegrambots:$telegrambotsVersion"
 
+    implementation "org.apache.kafka:kafka-clients:$kafkaVersion"
+
     implementation "org.postgresql:postgresql:$postgresVersion"
     implementation "com.zaxxer:HikariCP:$hikaryVersion"
 

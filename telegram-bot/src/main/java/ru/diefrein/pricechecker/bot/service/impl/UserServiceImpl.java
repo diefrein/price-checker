@@ -3,8 +3,8 @@ package ru.diefrein.pricechecker.bot.service.impl;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
-import ru.diefrein.pricechecker.bot.transport.client.CheckerServiceClient;
-import ru.diefrein.pricechecker.bot.transport.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +28,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByTelegramId(long telegramId) {
         return repository.findByTelegramId(telegramId);
+    }
+
+    @Override
+    public User findByCheckerUserId(UUID userId) {
+        return repository.findByCheckerUserId(userId);
     }
 
     @Override

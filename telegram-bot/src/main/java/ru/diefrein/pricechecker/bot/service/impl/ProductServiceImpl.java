@@ -3,8 +3,8 @@ package ru.diefrein.pricechecker.bot.service.impl;
 import ru.diefrein.pricechecker.bot.service.ProductService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
-import ru.diefrein.pricechecker.bot.transport.client.CheckerServiceClient;
-import ru.diefrein.pricechecker.bot.transport.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
 
 public class ProductServiceImpl implements ProductService {
 
