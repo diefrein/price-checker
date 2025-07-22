@@ -53,8 +53,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     private static final Logger log = LoggerFactory.getLogger(ProductRepositoryImpl.class);
     private final DataSource dataSource;
 
-    public ProductRepositoryImpl(ConnectionPool connectionPool) {
-        this.dataSource = connectionPool.getDataSource();
+    public ProductRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override

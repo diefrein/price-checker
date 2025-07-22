@@ -31,7 +31,7 @@ public class Application {
         CheckerServiceClient checkerServiceClient = new CheckerServiceClientImpl();
 
         ConnectionPool connectionPool = new ConnectionPool();
-        UserRepository userRepository = new UserRepositoryImpl(connectionPool);
+        UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());
         UserService userService = new UserServiceImpl(userRepository, checkerServiceClient);
 
         ProductService productService = new ProductServiceImpl(checkerServiceClient, userRepository);

@@ -40,8 +40,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final DataSource dataSource;
 
-    public UserRepositoryImpl(ConnectionPool connectionPool) {
-        this.dataSource = connectionPool.getDataSource();
+    public UserRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override

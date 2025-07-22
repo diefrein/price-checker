@@ -40,7 +40,7 @@ public class Application {
         long start = System.currentTimeMillis();
 
         ConnectionPool connectionPool = new ConnectionPool();
-        UserRepository userRepository = new UserRepositoryImpl(connectionPool);
+        UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -62,7 +62,7 @@ public class Application {
         Map<ProcessableSite, SiteParser> siteParsers = siteParser();
         ProductParser productParser = new ProductParserImpl(siteParsers);
 
-        ProductRepository productRepository = new ProductRepositoryImpl(connectionPool);
+        ProductRepository productRepository = new ProductRepositoryImpl(connectionPool.getDataSource());
 
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         PriceChangeProducer priceChangeProducer = getPriceChangeProducer(objectMapper);

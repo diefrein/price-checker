@@ -26,8 +26,8 @@ public class ProductHistoryRepositoryImpl implements ProductHistoryRepository {
 
     private final DataSource dataSource;
 
-    public ProductHistoryRepositoryImpl(ConnectionPool connectionPool) {
-        this.dataSource = connectionPool.getDataSource();
+    public ProductHistoryRepositoryImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
