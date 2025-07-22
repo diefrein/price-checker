@@ -1,5 +1,6 @@
 plugins {
-    id 'java'
+    id "java"
+    id "application"
 }
 
 group = 'ru.diefrein.pricechecker'
@@ -10,8 +11,28 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
+    implementation "org.telegram:telegrambots:$telegrambotsVersion"
+
+    implementation "org.postgresql:postgresql:$postgresVersion"
+    implementation "com.zaxxer:HikariCP:$hikaryVersion"
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
+
+    testImplementation platform("org.junit:junit-bom:$junitVersion")
     testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "ru.diefrein.pricechecker.bot.Application"
+        )
+    }
+}
+
+application {
+    mainClass = "ru.diefrein.pricechecker.bot.Application"
 }
 
 test {

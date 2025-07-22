@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: checker_db
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-checker:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -15,28 +15,94 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - pricechecker-network
 
-  liquibase:
+  bot-db:
+    container_name: bot-db
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bot_db
+    volumes:
+      - postgres-data-bot:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pricechecker-network
+
+  liquibase-checker:
     image: liquibase/liquibase
-    container_name: liquibase
+    container_name: liquibase-checker
     volumes:
       - ./checker-db/src/main/resources/:/liquibase/changelog/
-    command: --url=jdbc:postgresql://checker-db:5432/checker_db --username=postgres --password=postgres --changeLogFile=./changelog/db/changelog/changelog-master.xml update
+    command: >
+      --url=jdbc:postgresql://checker-db:5432/checker_db
+      --username=postgres
+      --password=postgres
+      --changeLogFile=./changelog/db/changelog/changelog-master.xml
+      update
     depends_on:
       checker-db:
         condition: service_healthy
-        
+    networks:
+      - pricechecker-network
+
+  liquibase-bot:
+    image: liquibase/liquibase
+    container_name: liquibase-bot
+    volumes:
+      - ./telegram-bot-db/src/main/resources/:/liquibase/changelog/
+    command: >
+      --url=jdbc:postgresql://bot-db:5432/bot_db
+      --username=postgres
+      --password=postgres
+      --changeLogFile=./changelog/db/changelog/changelog-master.xml
+      update
+    depends_on:
+      bot-db:
+        condition: service_healthy
+    networks:
+      - pricechecker-network
+
   checker-service:
     container_name: checker-service
     build:
-#      context: checker-service/.
       dockerfile: checker-service/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
       checker-db:
         condition: service_healthy
-    env_file: .env
+      liquibase-checker:
+        condition: service_completed_successfully
+    env_file: ./checker-service/.env
+    networks:
+      - pricechecker-network
+
+  telegram-bot:
+    container_name: telegram-bot
+    build:
+      dockerfile: telegram-bot/Dockerfile
+#    ports:
+#      - "8080:8080"
+    depends_on:
+      checker-db:
+        condition: service_healthy
+      liquibase-bot:
+        condition: service_completed_successfully
+    env_file: ./telegram-bot/.env
+    networks:
+      - pricechecker-network
 
 volumes:
-  postgres-data:
+  postgres-data-checker:
+  postgres-data-bot:
+networks:
+  pricechecker-network:
