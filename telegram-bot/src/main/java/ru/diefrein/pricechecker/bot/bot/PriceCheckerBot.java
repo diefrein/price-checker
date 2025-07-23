@@ -21,13 +21,9 @@ import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 
 import java.util.Map;
-import java.util.Set;
 
 public class PriceCheckerBot extends TelegramLongPollingBot {
     private static final Logger log = LoggerFactory.getLogger(PriceCheckerBot.class);
-
-    private static final Set<ProcessableCommandType> COMMANDS_WITHOUT_PERSISTED_USER =
-            Set.of(ProcessableCommandType.START, ProcessableCommandType.REGISTER);
 
     private final Map<ProcessableCommandType, CommandProcessor> processors;
     private final UserService userService;
@@ -36,11 +32,6 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         super(BotParameterProvider.TOKEN);
         this.processors = processors;
         this.userService = userService;
-    }
-
-    @Override
-    public String getBotToken() {
-        return BotParameterProvider.TOKEN;
     }
 
     @Override
@@ -54,13 +45,17 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         long chatId = command.chatId();
 
         try {
-            ProcessableCommandType commandType = ProcessableCommandType.fromText(command.text());
+            UserState state = getUserState(chatId);
+            ProcessableCommandType commandType = ProcessableCommandType.getCommandType(command, state);
 
             CommandProcessor processor = getCommandProcessor(commandType);
-            UserState state = getUserState(commandType, chatId);
 
             log.info("Processing command={}, chatId={}, userState={}", commandType, chatId, state);
             ProcessResult processResult = processor.process(command, state);
+
+            if (processResult.newState() != state) {
+                userService.updateStateByTelegramId(chatId, processResult.newState());
+            }
             sendMessage(chatId, processResult.response());
         } catch (IllegalCommandException e) {
             log.error("Illegal command, chatId={}", chatId, e);
@@ -78,7 +73,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public void clearWebhook() throws TelegramApiRequestException {
+    public void clearWebhook() {
         try {
             super.clearWebhook();
         } catch (TelegramApiRequestException e) {
@@ -116,11 +111,12 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         return processors.get(commandType);
     }
 
-    private UserState getUserState(ProcessableCommandType commandType, long chatId) {
-        if (COMMANDS_WITHOUT_PERSISTED_USER.contains(commandType)) {
+    private UserState getUserState(long chatId) {
+        try {
+            User user = userService.findByTelegramId(chatId);
+            return user.userState();
+        } catch (EntityNotFoundException e) {
             return UserState.INITIAL;
         }
-        User user = userService.findByTelegramId(chatId);
-        return user.userState();
     }
 }

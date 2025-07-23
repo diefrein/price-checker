@@ -1,5 +1,6 @@
 package ru.diefrein.pricechecker.bot.service.impl;
 
+import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return repository.findAll();
+    public void updateStateByTelegramId(long telegramId, UserState state) {
+        repository.updateStateByTelegramId(telegramId, state);
     }
 }

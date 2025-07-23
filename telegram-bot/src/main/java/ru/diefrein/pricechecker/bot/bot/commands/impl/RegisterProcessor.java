@@ -19,7 +19,7 @@ public class RegisterProcessor implements CommandProcessor {
     @Override
     public ProcessResult process(Command command, UserState state) {
         userService.create(command.chatId(), command.username());
-        return new ProcessResult(BotParameterProvider.REGISTER_RESPONSE);
+        return ProcessResult.toInitialState(BotParameterProvider.REGISTER_RESPONSE);
     }
 
     @Override

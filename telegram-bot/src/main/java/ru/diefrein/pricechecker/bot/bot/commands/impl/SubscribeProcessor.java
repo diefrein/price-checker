@@ -20,7 +20,10 @@ public class SubscribeProcessor implements CommandProcessor {
     public ProcessResult process(Command command, UserState state) {
         switch (state) {
             case INITIAL -> {
-                return new ProcessResult(BotParameterProvider.SUBSCRIBE_INITIAL_RESPONSE);
+                return new ProcessResult(
+                        BotParameterProvider.SUBSCRIBE_INITIAL_RESPONSE,
+                        UserState.SUBSCRIBE_WAIT_FOR_LINK
+                );
             }
             case SUBSCRIBE_WAIT_FOR_LINK -> {
                 return processWaitForLink(command);
@@ -41,8 +44,8 @@ public class SubscribeProcessor implements CommandProcessor {
         try {
             productService.create(command.chatId(), productLink);
         } catch (Exception e) {
-            return new ProcessResult(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_ERROR_RESPONSE);
+            return ProcessResult.toInitialState(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_ERROR_RESPONSE);
         }
-        return new ProcessResult(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_RESPONSE);
+        return ProcessResult.toInitialState(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_RESPONSE);
     }
 }

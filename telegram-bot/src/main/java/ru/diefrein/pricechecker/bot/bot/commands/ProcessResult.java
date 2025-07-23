@@ -1,4 +1,10 @@
 package ru.diefrein.pricechecker.bot.bot.commands;
 
-public record ProcessResult(String response) {
+import ru.diefrein.pricechecker.bot.bot.state.UserState;
+
+public record ProcessResult(String response, UserState newState) {
+
+    public static ProcessResult toInitialState(String response) {
+        return new ProcessResult(response, UserState.INITIAL);
+    }
 }
