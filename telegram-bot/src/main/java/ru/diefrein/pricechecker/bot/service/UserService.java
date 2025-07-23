@@ -1,9 +1,9 @@
 package ru.diefrein.pricechecker.bot.service;
 
 
+import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
@@ -14,5 +14,5 @@ public interface UserService {
 
     User findByCheckerUserId(UUID userId);
 
-    List<User> findAll();
+    void updateStateByTelegramId(long telegramId, UserState state);
 }

@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +29,9 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SELECT_USERS = """
             SELECT * FROM checker_bot.users
             """;
+    private static final String UPDATE_USER_STATE_BY_TELEGRAM_ID_STATEMENT = """
+            UPDATE checker_bot.users SET state = ? WHERE telegram_id = ?
+            """;
 
     private final DataSource dataSource;
 
@@ -41,8 +43,7 @@ public class UserRepositoryImpl implements UserRepository {
     public User create(long telegramId, UUID checkerUserId) {
         UserState initialState = UserState.INITIAL;
         try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement stmt =
-                         conn.prepareStatement(INSERT_USER_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement stmt = conn.prepareStatement(INSERT_USER_STATEMENT)) {
                 stmt.setObject(1, checkerUserId);
                 stmt.setLong(2, telegramId);
                 stmt.setString(3, initialState.name());
@@ -94,8 +95,23 @@ public class UserRepositoryImpl implements UserRepository {
             try (PreparedStatement stmt = conn.prepareStatement(SELECT_USER_BY_CHECKER_ID_STATEMENT)) {
                 stmt.setObject(1, userId);
                 ResultSet rs = stmt.executeQuery();
-                rs.next();
+                if (!rs.next()) {
+                    throw new EntityNotFoundException("User with checker_user_id=%s doesn't exist".formatted(userId));
+                }
                 return map(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void updateStateByTelegramId(long telegramId, UserState state) {
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement(UPDATE_USER_STATE_BY_TELEGRAM_ID_STATEMENT)) {
+                stmt.setString(1, state.name());
+                stmt.setLong(2, telegramId);
+                stmt.executeUpdate();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

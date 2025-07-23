@@ -20,17 +20,15 @@ import java.util.UUID;
 public class CheckerServiceClientImpl implements CheckerServiceClient {
 
     private static final Logger log = LoggerFactory.getLogger(CheckerServiceClientImpl.class);
-
-    public CheckerServiceClientImpl() {
-        log.info("baseurl={}", baseUrl);
-    }
-
     private final String baseUrl = String.format(
             "%s:%s",
             CheckerClientParameterProvider.CHECKER_SERVICE_HOST,
             CheckerClientParameterProvider.CHECKER_SERVICE_PORT
     );
     private final ObjectMapper objectMapper = new ObjectMapper();
+    public CheckerServiceClientImpl() {
+        log.info("baseurl={}", baseUrl);
+    }
 
     @Override
     public UUID createUser(CreateCheckerUserRequest request) {
@@ -46,7 +44,7 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
     @Override
     public void createProduct(CreateCheckerProductRequest request) {
         try {
-            sendPostRequest("/products" , objectMapper.writeValueAsString(request));
+            sendPostRequest("/products", objectMapper.writeValueAsString(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

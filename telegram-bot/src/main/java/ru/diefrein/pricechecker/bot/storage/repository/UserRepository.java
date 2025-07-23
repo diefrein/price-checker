@@ -1,5 +1,6 @@
 package ru.diefrein.pricechecker.bot.storage.repository;
 
+import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface UserRepository {
     List<User> findAll();
 
     User findByCheckerUserId(UUID userId);
+
+    void updateStateByTelegramId(long telegramId, UserState state);
 }

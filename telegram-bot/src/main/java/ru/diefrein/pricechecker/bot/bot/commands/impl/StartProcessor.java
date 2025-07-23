@@ -11,7 +11,7 @@ public class StartProcessor implements CommandProcessor {
 
     @Override
     public ProcessResult process(Command command, UserState state) {
-        return new ProcessResult(BotParameterProvider.START_RESPONSE);
+        return ProcessResult.toInitialState(BotParameterProvider.START_RESPONSE);
     }
 
     @Override
