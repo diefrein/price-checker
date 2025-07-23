@@ -19,6 +19,12 @@ public class ControllerUtils {
         return path.substring(index + prefix.length());
     }
 
+    /**
+     * Get query params as map
+     *
+     * @param query query
+     * @return params map
+     */
     public static Map<String, String> parseQueryParams(String query) {
         Map<String, String> params = new HashMap<>();
 

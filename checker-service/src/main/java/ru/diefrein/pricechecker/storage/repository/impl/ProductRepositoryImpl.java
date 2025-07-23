@@ -69,7 +69,8 @@ public class ProductRepositoryImpl implements ProductRepository {
             try {
                 try (PreparedStatement insertProductStmt =
                              conn.prepareStatement(INSERT_PRODUCT_STATEMENT, Statement.RETURN_GENERATED_KEYS);
-                     PreparedStatement insertProductHistoryStmt = conn.prepareStatement(INSERT_PRODUCT_HISTORY_STATEMENT)
+                     PreparedStatement insertProductHistoryStmt =
+                             conn.prepareStatement(INSERT_PRODUCT_HISTORY_STATEMENT)
                 ) {
                     insertProductStmt.setObject(1, userId);
                     insertProductStmt.setString(2, link);

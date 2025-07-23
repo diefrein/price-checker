@@ -24,10 +24,21 @@ public class PriceChangeProducer {
         this.producer = new KafkaProducer<>(props);
     }
 
+    /**
+     * Send event to default topic with key = event.user_id
+     *
+     * @param event price update event
+     */
     public void send(PriceChangeEvent event) {
         send(event.userId().toString(), event);
     }
 
+    /**
+     * Send event to default topic with specified key
+     *
+     * @param key key of message
+     * @param event price update event
+     */
     public void send(String key, PriceChangeEvent event) {
         ProducerRecord<String, String> record;
         try {

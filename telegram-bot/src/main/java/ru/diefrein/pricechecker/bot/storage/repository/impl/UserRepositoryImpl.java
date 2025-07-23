@@ -26,9 +26,6 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String SELECT_USER_BY_CHECKER_ID_STATEMENT = """
             SELECT * FROM checker_bot.users WHERE checker_user_id = ?
             """;
-    private static final String SELECT_USERS = """
-            SELECT * FROM checker_bot.users
-            """;
     private static final String UPDATE_USER_STATE_BY_TELEGRAM_ID_STATEMENT = """
             UPDATE checker_bot.users SET state = ? WHERE telegram_id = ?
             """;
@@ -40,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User create(long telegramId, UUID checkerUserId) {
+    public void create(long telegramId, UUID checkerUserId) {
         UserState initialState = UserState.INITIAL;
         try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(INSERT_USER_STATEMENT)) {
@@ -48,8 +45,6 @@ public class UserRepositoryImpl implements UserRepository {
                 stmt.setLong(2, telegramId);
                 stmt.setString(3, initialState.name());
                 stmt.executeUpdate();
-
-                return new User(telegramId, checkerUserId, initialState);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -66,23 +61,6 @@ public class UserRepositoryImpl implements UserRepository {
                     throw new EntityNotFoundException("User with chatId=%s doesn't exist".formatted(telegramId));
                 }
                 return map(rs);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<User> findAll() {
-        try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(SELECT_USERS)) {
-                ResultSet rs = stmt.executeQuery();
-
-                List<User> users = new ArrayList<>();
-                while (rs.next()) {
-                    users.add(map(rs));
-                }
-                return users;
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

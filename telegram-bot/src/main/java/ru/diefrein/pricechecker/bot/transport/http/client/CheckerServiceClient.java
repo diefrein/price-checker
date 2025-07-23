@@ -5,9 +5,23 @@ import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserR
 
 import java.util.UUID;
 
+/**
+ * Web client to call checker-service endpoints
+ */
 public interface CheckerServiceClient {
 
+    /**
+     * Create user in checker-db
+     *
+     * @param request creation request
+     * @return id of created user
+     */
     UUID createUser(CreateCheckerUserRequest request);
 
+    /**
+     * Create product that will be followed
+     *
+     * @param request product creation request
+     */
     void createProduct(CreateCheckerProductRequest request);
 }

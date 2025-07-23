@@ -26,6 +26,7 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
             CheckerClientParameterProvider.CHECKER_SERVICE_PORT
     );
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     public CheckerServiceClientImpl() {
         log.info("baseurl={}", baseUrl);
     }
@@ -84,8 +85,8 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
         }
 
         int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK ||
-                responseCode == HttpURLConnection.HTTP_CREATED) {
+        if (responseCode == HttpURLConnection.HTTP_OK
+                || responseCode == HttpURLConnection.HTTP_CREATED) {
             try (BufferedReader in = new BufferedReader(
                     new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();

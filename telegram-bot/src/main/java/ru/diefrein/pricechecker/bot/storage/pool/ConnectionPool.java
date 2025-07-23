@@ -19,6 +19,9 @@ public class ConnectionPool {
         this.dataSource = new HikariDataSource(config);
     }
 
+    /**
+     * @return pool datasource
+     */
     public HikariDataSource getDataSource() {
         return dataSource;
     }

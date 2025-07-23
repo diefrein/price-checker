@@ -15,9 +15,9 @@ import ru.diefrein.pricechecker.bot.bot.commands.impl.RegisterProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscribeProcessor;
 import ru.diefrein.pricechecker.bot.configuration.parameters.KafkaParameterProvider;
-import ru.diefrein.pricechecker.bot.service.ProductService;
+import ru.diefrein.pricechecker.bot.service.SubscriptionService;
 import ru.diefrein.pricechecker.bot.service.UserService;
-import ru.diefrein.pricechecker.bot.service.impl.ProductServiceImpl;
+import ru.diefrein.pricechecker.bot.service.impl.SubscriptionServiceImpl;
 import ru.diefrein.pricechecker.bot.service.impl.UserServiceImpl;
 import ru.diefrein.pricechecker.bot.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
@@ -42,9 +42,9 @@ public class Application {
         UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());
         UserService userService = new UserServiceImpl(userRepository, checkerServiceClient);
 
-        ProductService productService = new ProductServiceImpl(checkerServiceClient, userRepository);
+        SubscriptionService subscriptionService = new SubscriptionServiceImpl(checkerServiceClient, userRepository);
 
-        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(productService, userService);
+        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(subscriptionService, userService);
         PriceCheckerBot bot = new PriceCheckerBot(processors, userService);
 
         KafkaConsumerExecutor kafkaConsumerExecutor = getKafkaConsumerExecutor(bot, userService);
@@ -66,25 +66,29 @@ public class Application {
         }));
     }
 
-    private static Map<ProcessableCommandType, CommandProcessor> getProcessors(ProductService productService,
+    private static Map<ProcessableCommandType, CommandProcessor> getProcessors(SubscriptionService subscriptionService,
                                                                                UserService userService) {
         Map<ProcessableCommandType, CommandProcessor> processors = new ConcurrentHashMap<>();
         processors.put(ProcessableCommandType.START, new StartProcessor());
         processors.put(ProcessableCommandType.REGISTER, new RegisterProcessor(userService));
-        processors.put(ProcessableCommandType.SUBSCRIBE, new SubscribeProcessor(productService));
+        processors.put(ProcessableCommandType.SUBSCRIBE, new SubscribeProcessor(subscriptionService));
         return processors;
     }
 
     private static KafkaConsumerExecutor getKafkaConsumerExecutor(PriceCheckerBot bot, UserService userService) {
-        PriceChangeProcessor priceChangeProcessor = new PriceChangeProcessor(bot, userService);
-
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaParameterProvider.BOOTSTRAP_SERVERS_CONFIG);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaParameterProvider.GROUP_ID_CONFIG);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaParameterProvider.KEY_DESERIALIZER_CLASS_CONFIG);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaParameterProvider.VALUE_DESERIALIZER_CLASS_CONFIG);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, KafkaParameterProvider.AUTO_OFFSET_RESET_CONFIG);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                KafkaParameterProvider.BOOTSTRAP_SERVERS_CONFIG);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG,
+                KafkaParameterProvider.GROUP_ID_CONFIG);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                KafkaParameterProvider.KEY_DESERIALIZER_CLASS_CONFIG);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                KafkaParameterProvider.VALUE_DESERIALIZER_CLASS_CONFIG);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,
+                KafkaParameterProvider.AUTO_OFFSET_RESET_CONFIG);
 
+        PriceChangeProcessor priceChangeProcessor = new PriceChangeProcessor(bot, userService);
         return new KafkaConsumerExecutor(
                 KafkaParameterProvider.PRICE_CHANGE_TOPIC,
                 props,

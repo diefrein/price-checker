@@ -23,7 +23,12 @@ public class HttpServerConfigurator {
         this.handlers = handlers;
     }
 
-    public HttpServer initHttpServer() throws IOException {
+    /**
+     * Initializes configured HTTP server
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    public void initHttpServer() throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(InetAddress.getByName(host), port), 0);
 
         for (var entry : handlers.entrySet()) {
@@ -33,6 +38,5 @@ public class HttpServerConfigurator {
         server.start();
 
         log.info("HTTP Server started on host={} port={}", host, port);
-        return server;
     }
 }

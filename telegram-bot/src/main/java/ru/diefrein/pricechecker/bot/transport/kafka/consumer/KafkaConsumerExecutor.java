@@ -28,6 +28,9 @@ public class KafkaConsumerExecutor {
         }
     }
 
+    /**
+     * Start polling from broker
+     */
     public void start() {
         for (int i = 0; i < KafkaParameterProvider.CONSUMER_THREAD_COUNT; i++) {
             executor.submit(consumers.get(i));
@@ -35,12 +38,19 @@ public class KafkaConsumerExecutor {
         log.info("Started Kafka polling in {} threads", KafkaParameterProvider.CONSUMER_THREAD_COUNT);
     }
 
+    /**
+     * Gracefully stop polling. Stops every consumer polling and waits CONSUMER_SHUTDOWN_TIMEOUT_MS for termination.
+     * By end of timeout terminates all consumer threads
+     */
     public void stop() {
         consumers.forEach(consumer -> consumer.setActive(false));
         executor.shutdown();
 
         try {
-            if (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(
+                    KafkaParameterProvider.CONSUMER_SHUTDOWN_TIMEOUT_MS,
+                    TimeUnit.MILLISECONDS)
+            ) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {

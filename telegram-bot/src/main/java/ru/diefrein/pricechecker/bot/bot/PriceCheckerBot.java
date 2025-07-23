@@ -70,8 +70,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         } catch (DuplicateEntityException e) {
             log.error("Duplicate entity found for chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.USER_ALREADY_EXISTS_RESPONSE);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Exception while handling command, chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.GENERAL_ERROR_RESPONSE);
         }
@@ -86,6 +85,12 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Send message into the chat with user
+     *
+     * @param chatId id of chat
+     * @param text message
+     */
     public void sendMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId.toString());
