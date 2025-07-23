@@ -25,10 +25,7 @@ import java.util.Set;
 
 public class PriceCheckerBot extends TelegramLongPollingBot {
     private static final Logger log = LoggerFactory.getLogger(PriceCheckerBot.class);
-    private static final String UNKNOWN_COMMAND_RESPONSE = "Unknown command. Type /start to list all available commands";
-    private static final String USER_NOT_FOUND_RESPONSE = "User not found. Please use /register first";
-    private static final String GENERAL_ERROR_RESPONSE = "Unknown error, please contact system administrator";
-    private static final String botUsername = BotParameterProvider.NAME;
+
     private static final Set<ProcessableCommandType> COMMANDS_WITHOUT_PERSISTED_USER =
             Set.of(ProcessableCommandType.START, ProcessableCommandType.REGISTER);
 
@@ -48,7 +45,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return botUsername;
+        return BotParameterProvider.NAME;
     }
 
     @Override
@@ -67,16 +64,16 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
             sendMessage(chatId, processResult.response());
         } catch (IllegalCommandException e) {
             log.error("Illegal command, chatId={}", chatId, e);
-            sendMessage(chatId, UNKNOWN_COMMAND_RESPONSE);
+            sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
         } catch (CommandProcessorNotFoundException e) {
             log.error("No command processor found, chatId={}", chatId, e);
-            sendMessage(chatId, UNKNOWN_COMMAND_RESPONSE);
+            sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
         } catch (EntityNotFoundException e) {
             log.error("User not found for chatId={}", chatId, e);
-            sendMessage(chatId, USER_NOT_FOUND_RESPONSE);
+            sendMessage(chatId, BotParameterProvider.USER_NOT_FOUND_RESPONSE);
         } catch (Exception e) {
             log.error("Exception while handling command, chatId={}", chatId, e);
-            sendMessage(chatId, GENERAL_ERROR_RESPONSE);
+            sendMessage(chatId, BotParameterProvider.GENERAL_ERROR_RESPONSE);
         }
     }
 
