@@ -18,8 +18,8 @@ import java.util.UUID;
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String INSERT_USER_STATEMENT = """
-            INSERT INTO checker_bot.users (checker_user_id, telegram_id, user_state)
-            VALUES (?, ?)
+            INSERT INTO checker_bot.users (checker_user_id, telegram_id, state)
+            VALUES (?, ?, ?)
             """;
     private static final String SELECT_USER_BY_TELEGRAM_ID_STATEMENT = """
             SELECT * FROM checker_bot.users WHERE telegram_id = ?

@@ -53,12 +53,10 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        String text = message.getText();
-        Long chatId = message.getChatId();
+        Command command = map(update);
+        long chatId = command.chatId();
 
         try {
-            Command command = new Command(chatId, text);
             ProcessableCommandType commandType = ProcessableCommandType.fromText(command.text());
 
             CommandProcessor processor = getCommandProcessor(commandType);
@@ -91,6 +89,27 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         }
     }
 
+    public void sendMessage(Long chatId, String text) {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId.toString());
+        message.setText(text);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Failed to send message", e);
+        }
+    }
+
+    private Command map(Update update) {
+        Message message = update.getMessage();
+        return new Command(
+                message.getChatId(),
+                message.getText(),
+                message.getChat().getUserName()
+        );
+    }
+
     private CommandProcessor getCommandProcessor(ProcessableCommandType commandType) {
         if (!processors.containsKey(commandType)) {
             throw new CommandProcessorNotFoundException(
@@ -106,17 +125,5 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         }
         User user = userService.findByTelegramId(chatId);
         return user.userState();
-    }
-
-    public void sendMessage(Long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId.toString());
-        message.setText(text);
-
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            System.err.println("Failed to send message: " + e.getMessage());
-        }
     }
 }
