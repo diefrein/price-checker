@@ -12,6 +12,13 @@ public enum ProcessableCommandType {
         this.command = command;
     }
 
+    /**
+     * Resolves type of incoming command based on input and current user's state
+     *
+     * @param command incoming command
+     * @param state current user's state
+     * @return type of command
+     */
     public static ProcessableCommandType getCommandType(Command command, UserState state) {
         try {
             return ProcessableCommandType.fromText(command.text());

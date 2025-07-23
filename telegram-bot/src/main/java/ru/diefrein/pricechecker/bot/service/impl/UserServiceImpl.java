@@ -22,13 +22,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(long telegramId, String name) {
+    public void create(long telegramId, String name) {
         try {
             findByTelegramId(telegramId);
             throw new DuplicateEntityException("User with telegramId=%s already exists".formatted(telegramId));
         } catch (EntityNotFoundException e) {
             UUID checkerUserId = checkerServiceClient.createUser(new CreateCheckerUserRequest(name, true));
-            return repository.create(telegramId, checkerUserId);
+            repository.create(telegramId, checkerUserId);
         }
     }
 

@@ -27,7 +27,8 @@ public class LamodaParser implements SiteParser {
                     .setHeadless(false)); // Use headless(true) if needed
 
             BrowserContext context = browser.newContext(new Browser.NewContextOptions()
-                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                            + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
                     .setViewportSize(1280, 800));
 
             Page page = context.newPage();
@@ -68,8 +69,9 @@ public class LamodaParser implements SiteParser {
 
         if (price == null) {
             Element metaPrice = doc.selectFirst("meta[itemprop=price]");
-            if (metaPrice != null)
+            if (metaPrice != null) {
                 price = metaPrice.attr("content");
+            }
         }
 
         if (price == null) {

@@ -6,15 +6,42 @@ import ru.diefrein.pricechecker.bot.storage.entity.User;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * User's persistence layer
+ */
 public interface UserRepository {
 
-    User create(long telegramId, UUID checkerUserId);
+    /**
+     * Create user
+     *
+     * @param telegramId id of chat with user
+     * @param checkerUserId if of user in checker-db
+     */
+    void create(long telegramId, UUID checkerUserId);
 
+    /**
+     * Get user by chat id
+     *
+     * @param telegramId id of chat with user
+     * @return user
+     * @throws ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException if no user found
+     */
     User findByTelegramId(long telegramId);
 
-    List<User> findAll();
-
+    /**
+     * Get user by checker_user_id
+     *
+     * @param userId id of user in checker-db
+     * @return user
+     * @throws ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException if no user found
+     */
     User findByCheckerUserId(UUID userId);
 
+    /**
+     * Updates state of user by chat id
+     *
+     * @param telegramId id of chat with user
+     * @param state new user's state
+     */
     void updateStateByTelegramId(long telegramId, UserState state);
 }

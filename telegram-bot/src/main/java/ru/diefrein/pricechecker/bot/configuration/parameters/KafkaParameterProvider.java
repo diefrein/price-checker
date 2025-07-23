@@ -31,6 +31,10 @@ public class KafkaParameterProvider {
             "CONSUMER_POLL_TIMEOUT_MS",
             "1000"
     ));
+    public static final int CONSUMER_SHUTDOWN_TIMEOUT_MS = Integer.parseInt(ConfigurationUtils.getEnv(
+            "CONSUMER_SHUTDOWN_TIMEOUT_MS",
+            "30000"
+    ));
     public static final int CONSUMER_THREAD_COUNT = Integer.parseInt(ConfigurationUtils.getEnv(
             "CONSUMER_THREAD_COUNT",
             "3"

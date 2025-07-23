@@ -1,6 +1,7 @@
 plugins {
     id "java"
     id "application"
+    id "checkstyle"
 }
 
 group = 'ru.diefrein.pricechecker'
@@ -39,4 +40,10 @@ application {
 
 test {
     useJUnitPlatform()
+}
+
+checkstyle {
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    ignoreFailures = false
+    checkstyleTest.enabled = false
 }
