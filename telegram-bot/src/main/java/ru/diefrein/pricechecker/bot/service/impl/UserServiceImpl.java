@@ -3,6 +3,8 @@ package ru.diefrein.pricechecker.bot.service.impl;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
+import ru.diefrein.pricechecker.bot.storage.exception.DuplicateEntityException;
+import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
 import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
@@ -21,8 +23,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(long telegramId, String name) {
-        UUID checkerUserId = checkerServiceClient.createUser(new CreateCheckerUserRequest(name, true));
-        return repository.create(telegramId, checkerUserId);
+        try {
+            findByTelegramId(telegramId);
+            throw new DuplicateEntityException("User with telegramId=%s already exists".formatted(telegramId));
+        } catch (EntityNotFoundException e) {
+            UUID checkerUserId = checkerServiceClient.createUser(new CreateCheckerUserRequest(name, true));
+            return repository.create(telegramId, checkerUserId);
+        }
     }
 
     @Override

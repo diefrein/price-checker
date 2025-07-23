@@ -42,4 +42,8 @@ public class BotParameterProvider {
             "SUBSCRIBE_INITIAL_RESPONSE",
             "Error while saving product, please retry request later"
     );
+    public static final String USER_ALREADY_EXISTS_RESPONSE = ConfigurationUtils.getEnv(
+            "USER_ALREADY_EXISTS_RESPONSE",
+            "User already exists. Please use /start to find available commands"
+    );
 }

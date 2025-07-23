@@ -18,6 +18,7 @@ import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.configuration.parameters.BotParameterProvider;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
+import ru.diefrein.pricechecker.bot.storage.exception.DuplicateEntityException;
 import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 
 import java.util.Map;
@@ -66,7 +67,11 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         } catch (EntityNotFoundException e) {
             log.error("User not found for chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.USER_NOT_FOUND_RESPONSE);
-        } catch (Exception e) {
+        } catch (DuplicateEntityException e) {
+            log.error("Duplicate entity found for chatId={}", chatId, e);
+            sendMessage(chatId, BotParameterProvider.USER_ALREADY_EXISTS_RESPONSE);
+        }
+        catch (Exception e) {
             log.error("Exception while handling command, chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.GENERAL_ERROR_RESPONSE);
         }
