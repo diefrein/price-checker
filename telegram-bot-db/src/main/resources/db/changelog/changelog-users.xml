@@ -12,4 +12,12 @@
 
         <sqlFile path="scripts/create_users.sql" relativeToChangelogFile="true"/>
     </changeSet>
+
+    <changeSet id="0002" author="diefrein" runAlways="true">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="checker_bot.users"/>
+        </preConditions>
+
+        <sqlFile path="scripts/update_users_add_state.sql" relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>

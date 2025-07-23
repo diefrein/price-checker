@@ -1,6 +1,6 @@
 package ru.diefrein.pricechecker.bot.transport.kafka.consumer;
 
-import ru.diefrein.pricechecker.bot.PriceCheckerBot;
+import ru.diefrein.pricechecker.bot.bot.PriceCheckerBot;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.transport.kafka.dto.PriceChangeEvent;
