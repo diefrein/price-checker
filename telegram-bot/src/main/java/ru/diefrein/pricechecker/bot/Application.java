@@ -11,6 +11,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.diefrein.pricechecker.bot.bot.PriceCheckerBot;
 import ru.diefrein.pricechecker.bot.bot.commands.CommandProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
+import ru.diefrein.pricechecker.bot.bot.commands.impl.RegisterProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscribeProcessor;
 import ru.diefrein.pricechecker.bot.configuration.parameters.KafkaParameterProvider;
@@ -43,7 +44,7 @@ public class Application {
 
         ProductService productService = new ProductServiceImpl(checkerServiceClient, userRepository);
 
-        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(productService);
+        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(productService, userService);
         PriceCheckerBot bot = new PriceCheckerBot(processors, userService);
 
         KafkaConsumerExecutor kafkaConsumerExecutor = getKafkaConsumerExecutor(bot, userService);
@@ -65,9 +66,11 @@ public class Application {
         }));
     }
 
-    private static Map<ProcessableCommandType, CommandProcessor> getProcessors(ProductService productService) {
+    private static Map<ProcessableCommandType, CommandProcessor> getProcessors(ProductService productService,
+                                                                               UserService userService) {
         Map<ProcessableCommandType, CommandProcessor> processors = new ConcurrentHashMap<>();
         processors.put(ProcessableCommandType.START, new StartProcessor());
+        processors.put(ProcessableCommandType.REGISTER, new RegisterProcessor(userService));
         processors.put(ProcessableCommandType.SUBSCRIBE, new SubscribeProcessor(productService));
         return processors;
     }
