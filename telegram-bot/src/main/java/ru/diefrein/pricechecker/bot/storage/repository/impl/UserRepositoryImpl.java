@@ -1,7 +1,8 @@
 package ru.diefrein.pricechecker.bot.storage.repository.impl;
 
+import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
-import ru.diefrein.pricechecker.bot.storage.pool.ConnectionPool;
+import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
 
 import javax.sql.DataSource;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String INSERT_USER_STATEMENT = """
-            INSERT INTO checker_bot.users (checker_user_id, telegram_id)
+            INSERT INTO checker_bot.users (checker_user_id, telegram_id, user_state)
             VALUES (?, ?)
             """;
     private static final String SELECT_USER_BY_TELEGRAM_ID_STATEMENT = """
@@ -38,14 +39,16 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User create(long telegramId, UUID checkerUserId) {
+        UserState initialState = UserState.INITIAL;
         try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement stmt =
                          conn.prepareStatement(INSERT_USER_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
                 stmt.setObject(1, checkerUserId);
                 stmt.setLong(2, telegramId);
+                stmt.setString(3, initialState.name());
                 stmt.executeUpdate();
 
-                return new User(telegramId, checkerUserId);
+                return new User(telegramId, checkerUserId, initialState);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,7 +61,9 @@ public class UserRepositoryImpl implements UserRepository {
             try (PreparedStatement stmt = conn.prepareStatement(SELECT_USER_BY_TELEGRAM_ID_STATEMENT)) {
                 stmt.setObject(1, telegramId);
                 ResultSet rs = stmt.executeQuery();
-                rs.next();
+                if (!rs.next()) {
+                    throw new EntityNotFoundException("User with chatId=%s doesn't exist".formatted(telegramId));
+                }
                 return map(rs);
             }
         } catch (SQLException e) {
@@ -100,7 +105,8 @@ public class UserRepositoryImpl implements UserRepository {
     private User map(ResultSet rs) throws SQLException {
         return new User(
                 rs.getLong("telegram_id"),
-                UUID.fromString(rs.getString("checker_user_id"))
+                UUID.fromString(rs.getString("checker_user_id")),
+                UserState.valueOf(rs.getString("state"))
         );
     }
 }

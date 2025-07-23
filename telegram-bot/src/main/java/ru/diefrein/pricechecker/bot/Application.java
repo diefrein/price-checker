@@ -8,6 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import ru.diefrein.pricechecker.bot.bot.PriceCheckerBot;
+import ru.diefrein.pricechecker.bot.bot.commands.CommandProcessor;
+import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
+import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
+import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscribeProcessor;
 import ru.diefrein.pricechecker.bot.configuration.parameters.KafkaParameterProvider;
 import ru.diefrein.pricechecker.bot.service.ProductService;
 import ru.diefrein.pricechecker.bot.service.UserService;
@@ -21,7 +26,9 @@ import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClientIm
 import ru.diefrein.pricechecker.bot.transport.kafka.consumer.KafkaConsumerExecutor;
 import ru.diefrein.pricechecker.bot.transport.kafka.consumer.PriceChangeProcessor;
 
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Application {
 
@@ -36,7 +43,8 @@ public class Application {
 
         ProductService productService = new ProductServiceImpl(checkerServiceClient, userRepository);
 
-        PriceCheckerBot bot = new PriceCheckerBot(userService, productService);
+        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(productService);
+        PriceCheckerBot bot = new PriceCheckerBot(processors, userService);
 
         KafkaConsumerExecutor kafkaConsumerExecutor = getKafkaConsumerExecutor(bot, userService);
         kafkaConsumerExecutor.start();
@@ -55,6 +63,13 @@ public class Application {
             log.info("Shutting down application");
             kafkaConsumerExecutor.stop();
         }));
+    }
+
+    private static Map<ProcessableCommandType, CommandProcessor> getProcessors(ProductService productService) {
+        Map<ProcessableCommandType, CommandProcessor> processors = new ConcurrentHashMap<>();
+        processors.put(ProcessableCommandType.START, new StartProcessor());
+        processors.put(ProcessableCommandType.SUBSCRIBE, new SubscribeProcessor(productService));
+        return processors;
     }
 
     private static KafkaConsumerExecutor getKafkaConsumerExecutor(PriceCheckerBot bot, UserService userService) {
