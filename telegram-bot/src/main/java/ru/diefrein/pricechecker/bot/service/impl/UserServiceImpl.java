@@ -7,7 +7,6 @@ import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
 import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
 
-import java.util.List;
 import java.util.UUID;
 
 public class UserServiceImpl implements UserService {
