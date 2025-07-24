@@ -1,9 +1,11 @@
 package ru.diefrein.pricechecker.bot.transport.http.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.diefrein.pricechecker.bot.configuration.parameters.CheckerClientParameterProvider;
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerUser;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
@@ -14,8 +16,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CheckerServiceClientImpl implements CheckerServiceClient {
 
@@ -25,9 +31,10 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
             CheckerClientParameterProvider.CHECKER_SERVICE_HOST,
             CheckerClientParameterProvider.CHECKER_SERVICE_PORT
     );
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public CheckerServiceClientImpl() {
+    public CheckerServiceClientImpl(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         log.info("baseurl={}", baseUrl);
     }
 
@@ -51,15 +58,38 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
         }
     }
 
-    private String sendGetRequest(String endpoint) throws IOException {
-        URL url = new URL(baseUrl + endpoint);
+    @Override
+    public List<CheckerProduct> getUserProducts(UUID checkerUserId) {
+        try {
+            String response = sendGetRequest("/products", Map.of("userId", checkerUserId.toString()));
+            return objectMapper.readValue(response, new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String sendGetRequest(String endpoint, Map<String, String> queryParams) throws IOException {
+        StringBuilder urlWithParams = new StringBuilder(baseUrl + endpoint);
+
+        if (queryParams != null && !queryParams.isEmpty()) {
+            urlWithParams.append("?");
+            urlWithParams.append(queryParams.entrySet().stream()
+                    .map(entry -> {
+                        return URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" +
+                                URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8);
+                    })
+                    .collect(Collectors.joining("&")));
+        }
+
+        URL url = new URL(urlWithParams.toString());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
+        connection.setConnectTimeout(CheckerClientParameterProvider.REQUEST_TIMEOUT_MS);
 
         int responseCode = connection.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            try (BufferedReader in = new BufferedReader(
-                    new InputStreamReader(connection.getInputStream()))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();
                 String inputLine;
                 while ((inputLine = in.readLine()) != null) {
@@ -100,5 +130,4 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
             throw new IOException("POST request failed with response code: " + responseCode);
         }
     }
-
 }

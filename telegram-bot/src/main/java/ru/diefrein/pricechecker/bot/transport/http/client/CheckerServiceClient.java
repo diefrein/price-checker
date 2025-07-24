@@ -1,8 +1,10 @@
 package ru.diefrein.pricechecker.bot.transport.http.client;
 
+import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,4 +26,12 @@ public interface CheckerServiceClient {
      * @param request product creation request
      */
     void createProduct(CreateCheckerProductRequest request);
+
+    /**
+     * Get products that are followed by user
+     *
+     * @param checkerUserId id of user in checher-db
+     * @return list of products
+     */
+    List<CheckerProduct> getUserProducts(UUID checkerUserId);
 }
