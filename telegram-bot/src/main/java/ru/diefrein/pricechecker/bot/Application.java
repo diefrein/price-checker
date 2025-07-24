@@ -14,6 +14,7 @@ import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.RegisterProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscribeProcessor;
+import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscriptionsProcessor;
 import ru.diefrein.pricechecker.bot.configuration.parameters.KafkaParameterProvider;
 import ru.diefrein.pricechecker.bot.service.SubscriptionService;
 import ru.diefrein.pricechecker.bot.service.UserService;
@@ -36,7 +37,8 @@ public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
-        CheckerServiceClient checkerServiceClient = new CheckerServiceClientImpl();
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        CheckerServiceClient checkerServiceClient = new CheckerServiceClientImpl(objectMapper);
 
         ConnectionPool connectionPool = new ConnectionPool();
         UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());
@@ -72,6 +74,7 @@ public class Application {
         processors.put(ProcessableCommandType.START, new StartProcessor());
         processors.put(ProcessableCommandType.REGISTER, new RegisterProcessor(userService));
         processors.put(ProcessableCommandType.SUBSCRIBE, new SubscribeProcessor(subscriptionService));
+        processors.put(ProcessableCommandType.SUBSCRIPTIONS, new SubscriptionsProcessor(subscriptionService));
         return processors;
     }
 

@@ -4,7 +4,7 @@ import ru.diefrein.pricechecker.bot.bot.exception.IllegalCommandException;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 
 public enum ProcessableCommandType {
-    START("start"), REGISTER("register"), SUBSCRIBE("subscribe");
+    START("start"), REGISTER("register"), SUBSCRIBE("subscribe"), SUBSCRIPTIONS("subscriptions");
 
     private final String command;
 

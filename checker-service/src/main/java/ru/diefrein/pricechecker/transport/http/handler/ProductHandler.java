@@ -17,12 +17,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ProductHandler implements HttpHandler {
     private static final Logger log = LoggerFactory.getLogger(ProductHandler.class);
 
-    private static final String PRODUCT_PREFIX = "/products/";
+    private static final String USER_ID_QUERY_PARAM_KEY = "userId";
     private final ProductService productService;
     private final ObjectMapper objectMapper;
 
@@ -39,6 +40,8 @@ public class ProductHandler implements HttpHandler {
                 case ControllerUtils.GET -> handleGet(exchange);
                 default -> exchange.sendResponseHeaders(405, -1);
             }
+        } catch (IllegalArgumentException e) {
+            sendErrorResponse(e.getMessage(), 400, exchange);
         } catch (EntityNotFoundException e) {
             sendErrorResponse(e.getMessage(), 404, exchange);
         } catch (Exception e) {
@@ -66,14 +69,14 @@ public class ProductHandler implements HttpHandler {
 
     private void handleGet(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
+        String query = exchange.getRequestURI().getQuery();
 
-        if (path.endsWith("/products")) {
+        if (path.endsWith("/products") && query.isEmpty()) {
             exchange.sendResponseHeaders(400, -1);
         } else {
-            String[] pathParts = ControllerUtils.getPathAfterPrefix(path, PRODUCT_PREFIX).split("/");
-
-            if (pathParts.length == 1) {
-                String userId = pathParts[0];
+            Map<String, String> queryParams = ControllerUtils.parseQueryParams(query);
+            String userId = queryParams.get(USER_ID_QUERY_PARAM_KEY);
+            if (queryParams.size() == 1 && userId != null) {
                 List<Product> products = productService.findByUserId(UUID.fromString(userId));
                 sendOkResponse(products, exchange);
             } else {

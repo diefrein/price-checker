@@ -28,6 +28,7 @@ public class BotParameterProvider {
                     Welcome to Price Checker Bot!
                     Type /register to create a profile
                     Type /subscribe to subscribe for price updates
+                    Type /subscriptions to list all your subscriptions
                     """
     );
     public static final String SUBSCRIBE_INITIAL_RESPONSE = ConfigurationUtils.getEnv(
@@ -45,5 +46,17 @@ public class BotParameterProvider {
     public static final String USER_ALREADY_EXISTS_RESPONSE = ConfigurationUtils.getEnv(
             "USER_ALREADY_EXISTS_RESPONSE",
             "User already exists. Please use /start to find available commands"
+    );
+    public static final String SUBSCRIPTIONS_NO_SUBSCRIPTIONS_FOUND_RESPONSE = ConfigurationUtils.getEnv(
+            "SUBSCRIPTIONS_NO_SUBSCRIPTIONS_FOUND_RESPONSE",
+            "No subscriptions found. Type /subscribe to create new"
+    );
+    public static final String SUBSCRIPTIONS_SUBSCRIPTIONS_FOUND_RESPONSE = ConfigurationUtils.getEnv(
+            "SUBSCRIPTIONS_SUBSCRIPTIONS_FOUND_RESPONSE",
+            "Following subscriptions found:\n\n"
+    );
+    public static final String SUBSCRIPTIONS_SUBSCRIPTION_TEMPLATE = ConfigurationUtils.getEnv(
+            "SUBSCRIPTIONS_SUBSCRIPTION_TEMPLATE",
+            "%s\n%s\n%s"
     );
 }

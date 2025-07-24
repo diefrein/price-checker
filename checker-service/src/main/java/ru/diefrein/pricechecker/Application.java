@@ -24,6 +24,7 @@ import ru.diefrein.pricechecker.storage.repository.ProductRepository;
 import ru.diefrein.pricechecker.storage.repository.UserRepository;
 import ru.diefrein.pricechecker.storage.repository.impl.ProductRepositoryImpl;
 import ru.diefrein.pricechecker.storage.repository.impl.UserRepositoryImpl;
+import ru.diefrein.pricechecker.transport.http.handler.LoggingHandlerDecorator;
 import ru.diefrein.pricechecker.transport.http.handler.ProductHandler;
 import ru.diefrein.pricechecker.transport.http.handler.UserHandler;
 import ru.diefrein.pricechecker.transport.kafka.producer.PriceChangeProducer;
@@ -98,8 +99,8 @@ public class Application {
                                                          ProductService productService,
                                                          ObjectMapper objectMapper) {
         return Map.of(
-                "/users", new UserHandler(userService, objectMapper),
-                "/products", new ProductHandler(productService, objectMapper)
+                "/users", new LoggingHandlerDecorator(new UserHandler(userService, objectMapper)),
+                "/products", new LoggingHandlerDecorator(new ProductHandler(productService, objectMapper))
         );
     }
 }

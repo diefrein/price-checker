@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
             parsedProduct = parser.getProduct(link);
         } catch (Exception e) {
             log.error("Failed to parse product, unable to persist it to database", e);
-            return;
+            throw e;
         }
 
         productRepository.create(userId, link, parsedProduct.name(), parsedProduct.actualPrice());
