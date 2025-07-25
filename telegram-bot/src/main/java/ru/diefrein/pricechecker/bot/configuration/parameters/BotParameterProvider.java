@@ -59,4 +59,12 @@ public class BotParameterProvider {
             "SUBSCRIPTIONS_SUBSCRIPTION_TEMPLATE",
             "%s\n%s\n%s"
     );
+    public static final String SUBSCRIPTIONS_SUBSCRIPTION_BUTTON_TEMPLATE = ConfigurationUtils.getEnv(
+            "SUBSCRIPTIONS_SUBSCRIPTION_BUTTON_TEMPLATE",
+            "❌ Remove (%s) %s"
+    );
+    public static final String REMOVE_SUBSCRIPTION_RESPONSE = ConfigurationUtils.getEnv(
+            "REMOVE_SUBSCRIPTION_RESPONSE",
+            "Subscription has been successfully removed"
+    );
 }

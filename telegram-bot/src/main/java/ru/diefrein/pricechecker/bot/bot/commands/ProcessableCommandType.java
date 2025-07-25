@@ -4,7 +4,11 @@ import ru.diefrein.pricechecker.bot.bot.exception.IllegalCommandException;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 
 public enum ProcessableCommandType {
-    START("start"), REGISTER("register"), SUBSCRIBE("subscribe"), SUBSCRIPTIONS("subscriptions");
+    START("start"),
+    REGISTER("register"),
+    SUBSCRIBE("subscribe"),
+    SUBSCRIPTIONS("subscriptions"),
+    REMOVE_SUBSCRIPTION("remove_subscription");
 
     private final String command;
 
@@ -16,7 +20,7 @@ public enum ProcessableCommandType {
      * Resolves type of incoming command based on input and current user's state
      *
      * @param command incoming command
-     * @param state current user's state
+     * @param state   current user's state
      * @return type of command
      */
     public static ProcessableCommandType getCommandType(Command command, UserState state) {
@@ -25,6 +29,9 @@ public enum ProcessableCommandType {
         } catch (IllegalCommandException e) {
             if (state == UserState.SUBSCRIBE_WAIT_FOR_LINK) {
                 return ProcessableCommandType.SUBSCRIBE;
+            }
+            if (command.callbackData() != null && command.callbackData().contains(REMOVE_SUBSCRIPTION.name())) {
+                return ProcessableCommandType.REMOVE_SUBSCRIPTION;
             }
             throw new IllegalCommandException("Cannot resolve command type");
         }

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.storage.entity.Product;
+import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.exception.EntityNotFoundException;
 import ru.diefrein.pricechecker.transport.http.exception.DeserializationException;
 import ru.diefrein.pricechecker.transport.http.request.CreateProductRequest;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class ProductHandler implements HttpHandler {
     private static final Logger log = LoggerFactory.getLogger(ProductHandler.class);
 
+    private static final String PRODUCT_PREFIX = "/products/";
     private static final String USER_ID_QUERY_PARAM_KEY = "userId";
     private final ProductService productService;
     private final ObjectMapper objectMapper;
@@ -38,6 +40,7 @@ public class ProductHandler implements HttpHandler {
             switch (exchange.getRequestMethod()) {
                 case ControllerUtils.POST -> handlePost(exchange);
                 case ControllerUtils.GET -> handleGet(exchange);
+                case ControllerUtils.DELETE -> handleDelete(exchange);
                 default -> exchange.sendResponseHeaders(405, -1);
             }
         } catch (IllegalArgumentException e) {
@@ -79,6 +82,24 @@ public class ProductHandler implements HttpHandler {
             if (queryParams.size() == 1 && userId != null) {
                 List<Product> products = productService.findByUserId(UUID.fromString(userId));
                 sendOkResponse(products, exchange);
+            } else {
+                exchange.sendResponseHeaders(400, -1);
+            }
+        }
+    }
+
+    private void handleDelete(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+
+        if (path.endsWith("/products")) {
+            exchange.sendResponseHeaders(400, -1);
+        } else {
+            String[] pathParts = ControllerUtils.getPathAfterPrefix(path, PRODUCT_PREFIX).split("/");
+            if (pathParts.length == 1) {
+                String productId = pathParts[0];
+                productService.remove(UUID.fromString(productId));
+                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                exchange.sendResponseHeaders(204, -1);
             } else {
                 exchange.sendResponseHeaders(400, -1);
             }

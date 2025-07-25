@@ -1,6 +1,9 @@
 package ru.diefrein.pricechecker.bot.service.dto;
 
-public record UserSubscription(String link,
+import java.util.UUID;
+
+public record UserSubscription(UUID checkerProductId,
+                               String link,
                                String name,
                                Double actualPrice) {
 }

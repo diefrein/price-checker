@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -14,6 +15,7 @@ import ru.diefrein.pricechecker.bot.bot.commands.ProcessResult;
 import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
 import ru.diefrein.pricechecker.bot.bot.exception.CommandProcessorNotFoundException;
 import ru.diefrein.pricechecker.bot.bot.exception.IllegalCommandException;
+import ru.diefrein.pricechecker.bot.bot.response.ResponseCreator;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.configuration.parameters.BotParameterProvider;
 import ru.diefrein.pricechecker.bot.service.UserService;
@@ -28,11 +30,15 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
 
     private final Map<ProcessableCommandType, CommandProcessor> processors;
     private final UserService userService;
+    private final ResponseCreator responseCreator;
 
-    public PriceCheckerBot(Map<ProcessableCommandType, CommandProcessor> processors, UserService userService) {
+    public PriceCheckerBot(Map<ProcessableCommandType, CommandProcessor> processors,
+                           UserService userService,
+                           ResponseCreator responseCreator) {
         super(BotParameterProvider.TOKEN);
         this.processors = processors;
         this.userService = userService;
+        this.responseCreator = responseCreator;
     }
 
     @Override
@@ -42,6 +48,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        log.info("update={}", update);
         Command command = map(update);
         long chatId = command.chatId();
 
@@ -57,7 +64,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
             if (processResult.newState() != state) {
                 userService.updateStateByTelegramId(chatId, processResult.newState());
             }
-            sendMessage(chatId, processResult.response());
+            sendMessage(chatId, processResult);
         } catch (IllegalCommandException e) {
             log.error("Illegal command, chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
@@ -89,7 +96,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
      * Send message into the chat with user
      *
      * @param chatId id of chat
-     * @param text message
+     * @param text   message
      */
     public void sendMessage(Long chatId, String text) {
         SendMessage message = new SendMessage();
@@ -103,13 +110,41 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Send message into the chat with user
+     *
+     * @param chatId        id of chat
+     * @param processResult result of command handling (may contain text, buttons, etc)
+     */
+    public void sendMessage(Long chatId, ProcessResult processResult) {
+        SendMessage message = responseCreator.createResponse(processResult);
+        message.setChatId(chatId.toString());
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Failed to send message", e);
+        }
+    }
+
     private Command map(Update update) {
-        Message message = update.getMessage();
-        return new Command(
-                message.getChatId(),
-                message.getText(),
-                message.getChat().getUserName()
-        );
+        if (update.getMessage() != null) {
+            Message message = update.getMessage();
+            return new Command(
+                    message.getChatId(),
+                    message.getText(),
+                    message.getChat().getUserName(),
+                    null
+            );
+        } else {
+            MaybeInaccessibleMessage message = update.getCallbackQuery().getMessage();
+            return new Command(
+                    message.getChatId(),
+                    null,
+                    null,
+                    update.getCallbackQuery().getData()
+            );
+        }
     }
 
     private CommandProcessor getCommandProcessor(ProcessableCommandType commandType) {

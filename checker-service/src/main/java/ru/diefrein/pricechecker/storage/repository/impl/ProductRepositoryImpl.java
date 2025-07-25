@@ -44,7 +44,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             DELETE FROM checker.products WHERE id = ?
             """;
     private static final String DELETE_PRODUCT_HISTORY_BY_PRODUCT_ID_STATEMENT = """
-            DELETE FROM checker.product_history WHERE product_id = ?
+            DELETE FROM checker.products_history WHERE product_id = ?
             """;
     private static final String UPDATE_PRODUCT_BY_ID = """
             UPDATE checker.products SET name = ?, actual_price = ?, updated_at = ? WHERE id = ?

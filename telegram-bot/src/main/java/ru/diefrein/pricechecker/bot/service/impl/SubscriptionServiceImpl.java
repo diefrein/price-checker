@@ -9,6 +9,7 @@ import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SubscriptionServiceImpl implements SubscriptionService {
 
@@ -33,8 +34,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return products.stream().map(this::map).toList();
     }
 
+    @Override
+    public void remove(UUID productId) {
+        checkerServiceClient.removeProduct(productId);
+    }
+
     private UserSubscription map(CheckerProduct product) {
         return new UserSubscription(
+                product.id(),
                 product.link(),
                 product.name(),
                 product.actualPrice()

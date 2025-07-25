@@ -22,7 +22,8 @@ public class SubscribeProcessor implements CommandProcessor {
             case INITIAL -> {
                 return new ProcessResult(
                         BotParameterProvider.SUBSCRIBE_INITIAL_RESPONSE,
-                        UserState.SUBSCRIBE_WAIT_FOR_LINK
+                        UserState.SUBSCRIBE_WAIT_FOR_LINK,
+                        null
                 );
             }
             case SUBSCRIBE_WAIT_FOR_LINK -> {

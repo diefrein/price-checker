@@ -30,4 +30,11 @@ public interface ProductService {
      * @return list of products
      */
     List<Product> findByUserId(UUID userId);
+
+    /**
+     * Remove product
+     *
+     * @param id product id
+     */
+    void remove(UUID id);
 }
