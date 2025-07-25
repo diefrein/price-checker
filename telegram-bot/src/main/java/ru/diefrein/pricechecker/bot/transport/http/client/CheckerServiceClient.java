@@ -30,8 +30,15 @@ public interface CheckerServiceClient {
     /**
      * Get products that are followed by user
      *
-     * @param checkerUserId id of user in checher-db
+     * @param checkerUserId id of user in checker-db
      * @return list of products
      */
     List<CheckerProduct> getUserProducts(UUID checkerUserId);
+
+    /**
+     * Delete user's product by link
+     *
+     * @param productId id of product in checker-db
+     */
+    void removeProduct(UUID productId);
 }

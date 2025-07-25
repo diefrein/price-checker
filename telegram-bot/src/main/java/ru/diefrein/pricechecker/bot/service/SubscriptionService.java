@@ -4,6 +4,7 @@ package ru.diefrein.pricechecker.bot.service;
 import ru.diefrein.pricechecker.bot.service.dto.UserSubscription;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service that handles user's subscriptions
@@ -14,7 +15,7 @@ public interface SubscriptionService {
      * Subscribe to updates
      *
      * @param telegramId id of chat with user
-     * @param link link to the product which will be followed
+     * @param link       link to the product which will be followed
      */
     void subscribe(long telegramId, String link);
 
@@ -25,4 +26,11 @@ public interface SubscriptionService {
      * @return user subscriptions
      */
     List<UserSubscription> getUserSubscriptions(long telegramId);
+
+    /**
+     * Remove subscription
+     *
+     * @param productId id of product in checker-db
+     */
+    void remove(UUID productId);
 }

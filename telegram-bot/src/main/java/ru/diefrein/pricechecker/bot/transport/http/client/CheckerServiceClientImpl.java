@@ -69,16 +69,23 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
         }
     }
 
+    @Override
+    public void removeProduct(UUID productId) {
+        try {
+            sendDeleteRequest("/products/%s".formatted(productId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private String sendGetRequest(String endpoint, Map<String, String> queryParams) throws IOException {
         StringBuilder urlWithParams = new StringBuilder(baseUrl + endpoint);
 
         if (queryParams != null && !queryParams.isEmpty()) {
             urlWithParams.append("?");
             urlWithParams.append(queryParams.entrySet().stream()
-                    .map(entry -> {
-                        return URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "=" +
-                                URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8);
-                    })
+                    .map(entry -> URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + "="
+                            + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8))
                     .collect(Collectors.joining("&")));
         }
 
@@ -128,6 +135,20 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
             }
         } else {
             throw new IOException("POST request failed with response code: " + responseCode);
+        }
+    }
+
+    private void sendDeleteRequest(String endpoint) throws IOException {
+        URL url = new URL(baseUrl + endpoint);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("DELETE");
+        connection.setConnectTimeout(CheckerClientParameterProvider.REQUEST_TIMEOUT_MS);
+
+        int responseCode = connection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
+            return;
+        } else {
+            throw new IOException("DELETE request failed with response code: " + responseCode);
         }
     }
 }

@@ -292,7 +292,7 @@
             <property name="scope" value="protected"/>
             <property name="allowMissingPropertyJavadoc" value="false"/>
             <property name="allowedAnnotations" value="Override, Test, Bean"/>
-            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
+            <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
         <module name="SuppressionXpathSingleFilter">
             <property name="checks" value="MissingJavadocMethod"/>

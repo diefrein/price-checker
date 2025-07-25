@@ -78,6 +78,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByUserId(userId);
     }
 
+    @Override
+    public void remove(UUID id) {
+        productRepository.remove(id);
+    }
+
     private void checkForUpdatesInTransaction(Connection conn) {
         int pageNumber = 1;
         Page<User> activeUsers;
