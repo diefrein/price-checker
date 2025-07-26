@@ -4,6 +4,6 @@ import java.util.List;
 
 public record Page<T>(List<T> data, PageMeta meta) {
 
-    public record PageMeta(boolean hasNext) {
+    public record PageMeta(PageRequest pageRequest, boolean hasNext) {
     }
 }

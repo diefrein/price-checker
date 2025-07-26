@@ -19,7 +19,6 @@ import ru.diefrein.pricechecker.transport.kafka.producer.PriceChangeProducer;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 
 public class ProductServiceImpl implements ProductService {
@@ -74,8 +73,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findByUserId(UUID userId) {
-        return productRepository.findByUserId(userId);
+    public Page<Product> findByUserId(UUID userId, PageRequest pageRequest) {
+        return productRepository.findByUserId(userId, pageRequest);
     }
 
     @Override

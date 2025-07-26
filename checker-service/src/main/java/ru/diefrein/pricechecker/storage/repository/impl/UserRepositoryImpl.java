@@ -78,7 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
                 users.add(map(rs));
             }
 
-            return new Page<>(users, new Page.PageMeta(rs.next()));
+            return new Page<>(users, new Page.PageMeta(pageRequest, rs.next()));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

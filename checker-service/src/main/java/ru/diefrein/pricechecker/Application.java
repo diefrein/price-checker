@@ -46,7 +46,8 @@ public class Application {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
         UserService userService = new UserServiceImpl(userRepository);
-        ProductService productService = getProductService(connectionPool, userRepository);
+        PriceChangeProducer priceChangeProducer = getPriceChangeProducer(objectMapper);
+        ProductService productService = getProductService(connectionPool, userRepository, priceChangeProducer);
 
         HttpServerConfigurator httpServerConfigurator = new HttpServerConfigurator(
                 httpHandlers(userService, productService, objectMapper)
@@ -57,16 +58,17 @@ public class Application {
         long stop = System.currentTimeMillis();
         long startupTimeMs = stop - start;
         log.info("Application started in {} ms", startupTimeMs);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(priceChangeProducer::close));
     }
 
-    private static ProductService getProductService(ConnectionPool connectionPool, UserRepository userRepository) {
+    private static ProductService getProductService(ConnectionPool connectionPool,
+                                                    UserRepository userRepository,
+                                                    PriceChangeProducer priceChangeProducer) {
         Map<ProcessableSite, SiteParser> siteParsers = siteParser();
         ProductParser productParser = new ProductParserImpl(siteParsers);
 
         ProductRepository productRepository = new ProductRepositoryImpl(connectionPool.getDataSource());
-
-        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        PriceChangeProducer priceChangeProducer = getPriceChangeProducer(objectMapper);
 
         return new ProductServiceImpl(
                 connectionPool,

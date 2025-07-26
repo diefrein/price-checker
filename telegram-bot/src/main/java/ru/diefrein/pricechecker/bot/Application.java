@@ -56,7 +56,11 @@ public class Application {
 
         SubscriptionService subscriptionService = new SubscriptionServiceImpl(checkerServiceClient, userRepository);
 
-        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(subscriptionService, userService);
+        Map<ProcessableCommandType, CommandProcessor> processors = getProcessors(
+                subscriptionService,
+                userService,
+                objectMapper
+        );
         PriceCheckerBot bot = new PriceCheckerBot(processors, userService, new ResponseCreator());
 
         KafkaConsumerExecutor kafkaConsumerExecutor = getKafkaConsumerExecutor(bot, userService);
@@ -79,7 +83,8 @@ public class Application {
     }
 
     private static Map<ProcessableCommandType, CommandProcessor> getProcessors(SubscriptionService subscriptionService,
-                                                                               UserService userService) {
+                                                                               UserService userService,
+                                                                               ObjectMapper objectMapper) {
         Map<ProcessableCommandType, CommandProcessor> processors = new ConcurrentHashMap<>();
         processors.put(ProcessableCommandType.START,
                 new StartProcessor());
@@ -88,7 +93,7 @@ public class Application {
         processors.put(ProcessableCommandType.SUBSCRIBE,
                 new SubscribeProcessor(subscriptionService));
         processors.put(ProcessableCommandType.SUBSCRIPTIONS,
-                new SubscriptionsProcessor(subscriptionService));
+                new SubscriptionsProcessor(subscriptionService, objectMapper));
         processors.put(ProcessableCommandType.REMOVE_SUBSCRIPTION,
                 new RemoveSubscriptionProcessor(subscriptionService));
         return processors;

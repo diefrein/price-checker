@@ -33,6 +33,9 @@ public enum ProcessableCommandType {
             if (command.callbackData() != null && command.callbackData().contains(REMOVE_SUBSCRIPTION.name())) {
                 return ProcessableCommandType.REMOVE_SUBSCRIPTION;
             }
+            if (command.callbackData() != null && command.callbackData().contains(SUBSCRIPTIONS.name())) {
+                return ProcessableCommandType.SUBSCRIPTIONS;
+            }
             throw new IllegalCommandException("Cannot resolve command type");
         }
     }

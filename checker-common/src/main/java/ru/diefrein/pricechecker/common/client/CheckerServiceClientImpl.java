@@ -6,6 +6,8 @@ import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.common.client.dto.CheckerUser;
 import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
 import ru.diefrein.pricechecker.common.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,9 +54,14 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
     }
 
     @Override
-    public List<CheckerProduct> getUserProducts(UUID checkerUserId) {
+    public Page<CheckerProduct> getUserProducts(UUID checkerUserId, PageRequest pageRequest) {
         try {
-            String response = sendGetRequest("/products", Map.of("userId", checkerUserId.toString()));
+            Map<String, String> queryParams = Map.of(
+                    "userId", checkerUserId.toString(),
+                    "pageNumber", String.valueOf(pageRequest.pageNumber()),
+                    "pageSize", String.valueOf(pageRequest.pageSize())
+                    );
+            String response = sendGetRequest("/products", queryParams);
             return objectMapper.readValue(response, new TypeReference<>() {
             });
         } catch (IOException e) {

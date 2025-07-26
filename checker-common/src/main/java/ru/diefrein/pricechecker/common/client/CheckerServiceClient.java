@@ -3,6 +3,8 @@ package ru.diefrein.pricechecker.common.client;
 import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
 import ru.diefrein.pricechecker.common.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,11 +33,10 @@ public interface CheckerServiceClient {
      * Get products that are followed by user
      *
      * @param checkerUserId id of user in checker-db
-     * @return list of products
-     * @deprecated use paginated version
+     * @param pageRequest pagination parameters
+     * @return page of products
      */
-    @Deprecated(forRemoval = true, since = "26.07.2025")
-    List<CheckerProduct> getUserProducts(UUID checkerUserId);
+    Page<CheckerProduct> getUserProducts(UUID checkerUserId, PageRequest pageRequest);
 
     /**
      * Delete user's product by link
