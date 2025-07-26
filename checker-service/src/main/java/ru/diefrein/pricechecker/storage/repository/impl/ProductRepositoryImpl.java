@@ -2,12 +2,10 @@ package ru.diefrein.pricechecker.storage.repository.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.diefrein.pricechecker.storage.dto.Page;
-import ru.diefrein.pricechecker.storage.dto.PageRequest;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
-import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.exception.EntityNotFoundException;
-import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.storage.repository.ProductRepository;
 
 import javax.sql.DataSource;

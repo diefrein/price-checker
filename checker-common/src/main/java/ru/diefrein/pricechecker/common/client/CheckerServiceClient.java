@@ -1,8 +1,8 @@
-package ru.diefrein.pricechecker.bot.transport.http.client;
+package ru.diefrein.pricechecker.common.client;
 
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerUserRequest;
 
 import java.util.List;
 import java.util.UUID;

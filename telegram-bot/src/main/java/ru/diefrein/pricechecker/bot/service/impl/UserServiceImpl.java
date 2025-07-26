@@ -6,8 +6,8 @@ import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.exception.DuplicateEntityException;
 import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
-import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.common.client.CheckerServiceClient;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerUserRequest;
 
 import java.util.UUID;
 

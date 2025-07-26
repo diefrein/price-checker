@@ -17,6 +17,7 @@ import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscribeProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.SubscriptionsProcessor;
 import ru.diefrein.pricechecker.bot.bot.response.ResponseCreator;
+import ru.diefrein.pricechecker.bot.configuration.parameters.CheckerClientParameterProvider;
 import ru.diefrein.pricechecker.bot.configuration.parameters.KafkaParameterProvider;
 import ru.diefrein.pricechecker.bot.service.SubscriptionService;
 import ru.diefrein.pricechecker.bot.service.UserService;
@@ -25,10 +26,11 @@ import ru.diefrein.pricechecker.bot.service.impl.UserServiceImpl;
 import ru.diefrein.pricechecker.bot.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
 import ru.diefrein.pricechecker.bot.storage.repository.impl.UserRepositoryImpl;
-import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
-import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClientImpl;
 import ru.diefrein.pricechecker.bot.transport.kafka.consumer.KafkaConsumerExecutor;
 import ru.diefrein.pricechecker.bot.transport.kafka.consumer.PriceChangeProcessor;
+import ru.diefrein.pricechecker.common.client.CheckerClientParameters;
+import ru.diefrein.pricechecker.common.client.CheckerServiceClient;
+import ru.diefrein.pricechecker.common.client.CheckerServiceClientImpl;
 
 import java.util.Map;
 import java.util.Properties;
@@ -40,7 +42,13 @@ public class Application {
 
     public static void main(String[] args) {
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        CheckerServiceClient checkerServiceClient = new CheckerServiceClientImpl(objectMapper);
+        CheckerServiceClient checkerServiceClient = new CheckerServiceClientImpl(
+                objectMapper,
+                new CheckerClientParameters(
+                        CheckerClientParameterProvider.CHECKER_SERVICE_URL,
+                        CheckerClientParameterProvider.REQUEST_TIMEOUT_MS
+                )
+        );
 
         ConnectionPool connectionPool = new ConnectionPool();
         UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());

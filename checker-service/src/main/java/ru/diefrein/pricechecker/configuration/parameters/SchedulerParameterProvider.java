@@ -1,6 +1,6 @@
 package ru.diefrein.pricechecker.configuration.parameters;
 
-import ru.diefrein.pricechecker.util.ConfigurationUtils;
+import ru.diefrein.pricechecker.common.util.ConfigurationUtils;
 
 public class SchedulerParameterProvider {
     public static int PRODUCT_PRICE_JOB_INITIAL_DELAY_SECONDS =

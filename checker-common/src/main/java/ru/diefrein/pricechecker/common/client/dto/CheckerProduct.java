@@ -1,4 +1,4 @@
-package ru.diefrein.pricechecker.bot.transport.http.client.dto;
+package ru.diefrein.pricechecker.common.client.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

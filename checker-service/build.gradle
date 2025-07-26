@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(path: ':checker-common')
+
     implementation "org.jsoup:jsoup:$jsoupVersion"
     implementation "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
     implementation 'com.microsoft.playwright:playwright:1.44.0' // todo remove

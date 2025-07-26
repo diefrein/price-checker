@@ -1,4 +1,4 @@
-package ru.diefrein.pricechecker.storage.dto;
+package ru.diefrein.pricechecker.common.storage.dto;
 
 import java.util.List;
 

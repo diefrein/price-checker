@@ -2,12 +2,12 @@ package ru.diefrein.pricechecker.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.configuration.parameters.ProductServiceParameterProvider;
 import ru.diefrein.pricechecker.service.ProductParser;
 import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.service.dto.ParsedProduct;
-import ru.diefrein.pricechecker.storage.dto.Page;
-import ru.diefrein.pricechecker.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;

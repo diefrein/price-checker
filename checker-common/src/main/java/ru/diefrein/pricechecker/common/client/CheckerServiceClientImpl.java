@@ -1,14 +1,11 @@
-package ru.diefrein.pricechecker.bot.transport.http.client;
+package ru.diefrein.pricechecker.common.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.diefrein.pricechecker.bot.configuration.parameters.CheckerClientParameterProvider;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerUser;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerUserRequest;
+import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
+import ru.diefrein.pricechecker.common.client.dto.CheckerUser;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerUserRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,17 +22,13 @@ import java.util.stream.Collectors;
 
 public class CheckerServiceClientImpl implements CheckerServiceClient {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckerServiceClientImpl.class);
-    private final String baseUrl = String.format(
-            "%s:%s",
-            CheckerClientParameterProvider.CHECKER_SERVICE_HOST,
-            CheckerClientParameterProvider.CHECKER_SERVICE_PORT
-    );
     private final ObjectMapper objectMapper;
+    private final CheckerClientParameters parameters;
 
-    public CheckerServiceClientImpl(ObjectMapper objectMapper) {
+    public CheckerServiceClientImpl(ObjectMapper objectMapper,
+                                    CheckerClientParameters parameters) {
+        this.parameters = parameters;
         this.objectMapper = objectMapper;
-        log.info("baseurl={}", baseUrl);
     }
 
     @Override
@@ -79,7 +72,7 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
     }
 
     private String sendGetRequest(String endpoint, Map<String, String> queryParams) throws IOException {
-        StringBuilder urlWithParams = new StringBuilder(baseUrl + endpoint);
+        StringBuilder urlWithParams = new StringBuilder(parameters.baseUrl() + endpoint);
 
         if (queryParams != null && !queryParams.isEmpty()) {
             urlWithParams.append("?");
@@ -92,7 +85,7 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
         URL url = new URL(urlWithParams.toString());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setConnectTimeout(CheckerClientParameterProvider.REQUEST_TIMEOUT_MS);
+        connection.setConnectTimeout(parameters.connectionTimeout());
 
         int responseCode = connection.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -110,7 +103,7 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
     }
 
     private String sendPostRequest(String endpoint, String jsonBody) throws IOException {
-        URL url = new URL(baseUrl + endpoint);
+        URL url = new URL(parameters.baseUrl() + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -139,15 +132,13 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
     }
 
     private void sendDeleteRequest(String endpoint) throws IOException {
-        URL url = new URL(baseUrl + endpoint);
+        URL url = new URL(parameters.baseUrl() + endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("DELETE");
-        connection.setConnectTimeout(CheckerClientParameterProvider.REQUEST_TIMEOUT_MS);
+        connection.setConnectTimeout(parameters.connectionTimeout());
 
         int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_NO_CONTENT) {
-            return;
-        } else {
+        if (responseCode != HttpURLConnection.HTTP_NO_CONTENT) {
             throw new IOException("DELETE request failed with response code: " + responseCode);
         }
     }

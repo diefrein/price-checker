@@ -3,4 +3,5 @@ include 'checker-service'
 include 'checker-db'
 include 'telegram-bot'
 include 'telegram-bot-db'
+include 'checker-common'
 
