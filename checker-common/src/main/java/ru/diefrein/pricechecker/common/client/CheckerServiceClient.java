@@ -32,7 +32,9 @@ public interface CheckerServiceClient {
      *
      * @param checkerUserId id of user in checker-db
      * @return list of products
+     * @deprecated use paginated version
      */
+    @Deprecated(forRemoval = true, since = "26.07.2025")
     List<CheckerProduct> getUserProducts(UUID checkerUserId);
 
     /**
