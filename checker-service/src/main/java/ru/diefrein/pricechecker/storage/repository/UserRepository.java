@@ -1,7 +1,7 @@
 package ru.diefrein.pricechecker.storage.repository;
 
-import ru.diefrein.pricechecker.storage.dto.Page;
-import ru.diefrein.pricechecker.storage.dto.PageRequest;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.User;
 
 import java.sql.Connection;

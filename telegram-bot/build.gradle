@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(path: ':checker-common')
+
     implementation "org.telegram:telegrambots:$telegrambotsVersion"
 
     implementation "org.apache.kafka:kafka-clients:$kafkaVersion"

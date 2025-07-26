@@ -1,6 +1,6 @@
 package ru.diefrein.pricechecker.bot.configuration.parameters;
 
-import ru.diefrein.pricechecker.bot.util.ConfigurationUtils;
+import ru.diefrein.pricechecker.common.util.ConfigurationUtils;
 
 public class BotParameterProvider {
     public static final String TOKEN = ConfigurationUtils.getEnv("BOT_TOKEN");

@@ -4,9 +4,9 @@ import ru.diefrein.pricechecker.bot.service.SubscriptionService;
 import ru.diefrein.pricechecker.bot.service.dto.UserSubscription;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
-import ru.diefrein.pricechecker.bot.transport.http.client.CheckerServiceClient;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CheckerProduct;
-import ru.diefrein.pricechecker.bot.transport.http.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.common.client.CheckerServiceClient;
+import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
+import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
 
 import java.util.List;
 import java.util.UUID;
