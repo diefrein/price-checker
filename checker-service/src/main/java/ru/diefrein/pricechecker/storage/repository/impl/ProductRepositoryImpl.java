@@ -138,26 +138,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findByUserId(UUID userId) {
-        try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(SELECT_PRODUCT_BY_USER_ID_STATEMENT)) {
-                stmt.setObject(1, userId);
-                ResultSet rs = stmt.executeQuery();
-
-                List<Product> products = new ArrayList<>();
-                while (rs.next()) {
-                    products.add(map(rs));
-                }
-                return products;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Page<Product> findByUserId(Connection conn, UUID userId, PageRequest pageRequest) {
         try (PreparedStatement stmt = conn.prepareStatement(SELECT_PRODUCT_BY_USER_ID_PAGE_STATEMENT)) {
             stmt.setObject(1, userId);
@@ -170,7 +150,16 @@ public class ProductRepositoryImpl implements ProductRepository {
                 products.add(map(rs));
             }
 
-            return new Page<>(products, new Page.PageMeta(rs.next()));
+            return new Page<>(products, new Page.PageMeta(pageRequest, rs.next()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Page<Product> findByUserId(UUID userId, PageRequest pageRequest) {
+        try (Connection conn = dataSource.getConnection()) {
+            return findByUserId(conn, userId, pageRequest);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

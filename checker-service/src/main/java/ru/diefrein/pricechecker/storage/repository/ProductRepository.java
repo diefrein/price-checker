@@ -35,14 +35,6 @@ public interface ProductRepository {
     void update(Connection conn, UUID productId, String name, Double actualPrice);
 
     /**
-     * Get all products followed by specified user
-     *
-     * @param userId id of user
-     * @return list of products
-     */
-    List<Product> findByUserId(UUID userId);
-
-    /**
      * Get products page followed by specified user
      *
      * @param conn        database connection
@@ -51,6 +43,15 @@ public interface ProductRepository {
      * @return page of products
      */
     Page<Product> findByUserId(Connection conn, UUID userId, PageRequest pageRequest);
+
+    /**
+     * Get products page followed by specified user
+     *
+     * @param userId      id of user
+     * @param pageRequest pagination request
+     * @return page of products
+     */
+    Page<Product> findByUserId(UUID userId, PageRequest pageRequest);
 
     /**
      * Get product by id

@@ -7,8 +7,9 @@ import ru.diefrein.pricechecker.bot.storage.repository.UserRepository;
 import ru.diefrein.pricechecker.common.client.CheckerServiceClient;
 import ru.diefrein.pricechecker.common.client.dto.CheckerProduct;
 import ru.diefrein.pricechecker.common.client.dto.CreateCheckerProductRequest;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
-import java.util.List;
 import java.util.UUID;
 
 public class SubscriptionServiceImpl implements SubscriptionService {
@@ -28,10 +29,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public List<UserSubscription> getUserSubscriptions(long telegramId) {
+    public Page<UserSubscription> getUserSubscriptions(long telegramId, PageRequest pageRequest) {
         User user = userRepository.findByTelegramId(telegramId);
-        List<CheckerProduct> products = checkerServiceClient.getUserProducts(user.checkerUserId());
-        return products.stream().map(this::map).toList();
+        Page<CheckerProduct> products = checkerServiceClient.getUserProducts(user.checkerUserId(), pageRequest);
+        return new Page<>(products.data().stream().map(this::map).toList(), products.meta());
     }
 
     @Override

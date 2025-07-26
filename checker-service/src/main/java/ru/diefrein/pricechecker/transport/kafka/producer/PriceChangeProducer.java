@@ -54,6 +54,12 @@ public class PriceChangeProducer {
                         metadata.topic(), metadata.partition(), metadata.offset());
             }
         });
+    }
+
+    /**
+     * Close this producer. This method blocks until all previously sent requests complete
+     */
+    public void close() {
         producer.close();
     }
 }

@@ -5,9 +5,10 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.storage.entity.Product;
-import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.exception.EntityNotFoundException;
 import ru.diefrein.pricechecker.transport.http.exception.DeserializationException;
 import ru.diefrein.pricechecker.transport.http.request.CreateProductRequest;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -26,6 +26,8 @@ public class ProductHandler implements HttpHandler {
 
     private static final String PRODUCT_PREFIX = "/products/";
     private static final String USER_ID_QUERY_PARAM_KEY = "userId";
+    private static final String PAGE_NUMBER_PARAM_KEY = "pageNumber";
+    private static final String PAGE_SIZE_PARAM_KEY = "pageSize";
     private final ProductService productService;
     private final ObjectMapper objectMapper;
 
@@ -79,8 +81,14 @@ public class ProductHandler implements HttpHandler {
         } else {
             Map<String, String> queryParams = ControllerUtils.parseQueryParams(query);
             String userId = queryParams.get(USER_ID_QUERY_PARAM_KEY);
-            if (queryParams.size() == 1 && userId != null) {
-                List<Product> products = productService.findByUserId(UUID.fromString(userId));
+            String pageNumber = queryParams.get(PAGE_NUMBER_PARAM_KEY);
+            String pageSize = queryParams.get(PAGE_SIZE_PARAM_KEY);
+            if (userId != null && pageNumber != null && pageSize != null) {
+                PageRequest pageRequest = new PageRequest(
+                        Long.parseLong(pageSize),
+                        Long.parseLong(pageNumber)
+                );
+                Page<Product> products = productService.findByUserId(UUID.fromString(userId), pageRequest);
                 sendOkResponse(products, exchange);
             } else {
                 exchange.sendResponseHeaders(400, -1);

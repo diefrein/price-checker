@@ -2,6 +2,8 @@ package ru.diefrein.pricechecker.bot.service;
 
 
 import ru.diefrein.pricechecker.bot.service.dto.UserSubscription;
+import ru.diefrein.pricechecker.common.storage.dto.Page;
+import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,12 +22,13 @@ public interface SubscriptionService {
     void subscribe(long telegramId, String link);
 
     /**
-     * Get list of all user's subscriptions
+     * Get page of user's subscriptions
      *
      * @param telegramId id of chat with user
-     * @return user subscriptions
+     * @param pageRequest pagination parameters
+     * @return page of user's subscriptions
      */
-    List<UserSubscription> getUserSubscriptions(long telegramId);
+    Page<UserSubscription> getUserSubscriptions(long telegramId, PageRequest pageRequest);
 
     /**
      * Remove subscription
