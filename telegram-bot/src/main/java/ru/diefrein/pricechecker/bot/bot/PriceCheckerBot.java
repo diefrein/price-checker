@@ -64,7 +64,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
             if (processResult.newState() != state) {
                 userService.updateStateByTelegramId(chatId, processResult.newState());
             }
-            sendMessage(chatId, processResult);
+            sendMessage(processResult, command);
         } catch (IllegalCommandException e) {
             log.error("Illegal command, chatId={}", chatId, e);
             sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
@@ -113,15 +113,12 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
     /**
      * Send message into the chat with user
      *
-     * @param chatId        id of chat
      * @param processResult result of command handling (may contain text, buttons, etc)
+     * @param command user command
      */
-    public void sendMessage(Long chatId, ProcessResult processResult) {
-        SendMessage message = responseCreator.createResponse(processResult);
-        message.setChatId(chatId.toString());
-
+    public void sendMessage(ProcessResult processResult, Command command) {
         try {
-            execute(message);
+            execute(responseCreator.createResponse(processResult, command));
         } catch (TelegramApiException e) {
             log.error("Failed to send message", e);
         }
@@ -134,6 +131,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
                     message.getChatId(),
                     message.getText(),
                     message.getChat().getUserName(),
+                    message.getMessageId(),
                     null
             );
         } else {
@@ -142,6 +140,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
                     message.getChatId(),
                     null,
                     null,
+                    message.getMessageId(),
                     update.getCallbackQuery().getData()
             );
         }
