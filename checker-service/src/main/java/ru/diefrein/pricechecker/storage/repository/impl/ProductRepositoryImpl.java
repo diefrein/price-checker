@@ -146,11 +146,17 @@ public class ProductRepositoryImpl implements ProductRepository {
             ResultSet rs = stmt.executeQuery();
 
             List<Product> products = new ArrayList<>();
-            while (rs.next() && products.size() < pageRequest.pageSize()) {
-                products.add(map(rs));
+            boolean hasNext = false;
+            while (rs.next()) {
+                if (products.size() < pageRequest.pageSize()) {
+                    products.add(map(rs));
+                } else {
+                    hasNext = true;
+                    break;
+                }
             }
 
-            return new Page<>(products, new Page.PageMeta(pageRequest, rs.next()));
+            return new Page<>(products, new Page.PageMeta(pageRequest, hasNext));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
