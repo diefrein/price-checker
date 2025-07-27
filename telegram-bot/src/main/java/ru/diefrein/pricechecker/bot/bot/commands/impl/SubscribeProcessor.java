@@ -3,7 +3,6 @@ package ru.diefrein.pricechecker.bot.bot.commands.impl;
 import ru.diefrein.pricechecker.bot.bot.commands.Command;
 import ru.diefrein.pricechecker.bot.bot.commands.CommandProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.ProcessResult;
-import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.configuration.parameters.BotParameterProvider;
 import ru.diefrein.pricechecker.bot.service.SubscriptionService;
@@ -33,11 +32,6 @@ public class SubscribeProcessor implements CommandProcessor {
                     "UserState=%s is not processable by processor=%s", state, this.getClass().getSimpleName()
             ));
         }
-    }
-
-    @Override
-    public ProcessableCommandType getProcessableCommandType() {
-        return ProcessableCommandType.SUBSCRIBE;
     }
 
     private ProcessResult processWaitForLink(Command command) {

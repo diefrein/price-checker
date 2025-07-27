@@ -1,6 +1,5 @@
 package ru.diefrein.pricechecker.bot.bot.commands.impl;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -34,25 +33,25 @@ public class SubscriptionsProcessor implements CommandProcessor {
 
     @Override
     public ProcessResult process(Command command, UserState state) {
-        PageRequest pageRequest = new PageRequest(5, 1);
-        if (!StringUtil.isNullOrEmpty(command.callbackData())) {
-            try {
-                pageRequest = objectMapper.readValue(
-                        StringUtils.removeStart(
-                                command.callbackData(),
-                                ProcessableCommandType.SUBSCRIPTIONS.name().concat("_")),
-                        PageRequest.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        PageRequest pageRequest = new PageRequest(BotParameterProvider.SUBSCRIPTIONS_PAGE_SIZE, 1);
         Page<UserSubscription> subscriptions = subscriptionService.getUserSubscriptions(command.chatId(), pageRequest);
         return ProcessResult.toInitialState(toResponse(subscriptions), mapToButtonLayout(subscriptions));
     }
 
     @Override
-    public ProcessableCommandType getProcessableCommandType() {
-        return ProcessableCommandType.SUBSCRIPTIONS;
+    public ProcessResult processCallback(Command command, UserState state) {
+        PageRequest pageRequest;
+        try {
+            pageRequest = objectMapper.readValue(
+                    StringUtils.removeStart(
+                            command.callbackData(),
+                            ProcessableCommandType.SUBSCRIPTIONS.name().concat("_")),
+                    PageRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        Page<UserSubscription> subscriptions = subscriptionService.getUserSubscriptions(command.chatId(), pageRequest);
+        return ProcessResult.toInitialState(toResponse(subscriptions), mapToButtonLayout(subscriptions));
     }
 
     private String toResponse(Page<UserSubscription> subscriptions) {

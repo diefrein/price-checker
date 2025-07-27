@@ -24,16 +24,16 @@ public enum ProcessableCommandType {
      * @return type of command
      */
     public static ProcessableCommandType getCommandType(Command command, UserState state) {
-        try {
-            return ProcessableCommandType.fromText(command.text());
-        } catch (IllegalCommandException e) {
+        if (command.callbackData() == null) {
             if (state == UserState.SUBSCRIBE_WAIT_FOR_LINK) {
                 return ProcessableCommandType.SUBSCRIBE;
             }
-            if (command.callbackData() != null && command.callbackData().contains(REMOVE_SUBSCRIPTION.name())) {
+            return ProcessableCommandType.fromText(command.text());
+        } else {
+            if (command.callbackData().contains(REMOVE_SUBSCRIPTION.name())) {
                 return ProcessableCommandType.REMOVE_SUBSCRIPTION;
             }
-            if (command.callbackData() != null && command.callbackData().contains(SUBSCRIPTIONS.name())) {
+            if (command.callbackData().contains(SUBSCRIPTIONS.name())) {
                 return ProcessableCommandType.SUBSCRIPTIONS;
             }
             throw new IllegalCommandException("Cannot resolve command type");

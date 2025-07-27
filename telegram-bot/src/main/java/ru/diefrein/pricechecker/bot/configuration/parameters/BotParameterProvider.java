@@ -5,6 +5,9 @@ import ru.diefrein.pricechecker.common.util.ConfigurationUtils;
 public class BotParameterProvider {
     public static final String TOKEN = ConfigurationUtils.getEnv("BOT_TOKEN");
     public static final String NAME = ConfigurationUtils.getEnv("BOT_NAME", "price-checker-bot");
+    public static final int SUBSCRIPTIONS_PAGE_SIZE = Integer.parseInt(
+            ConfigurationUtils.getEnv("SUBSCRIPTIONS_PAGE_SIZE", "5")
+    );
 
     public static final String UNKNOWN_COMMAND_RESPONSE = ConfigurationUtils.getEnv(
             "UNKNOWN_COMMAND_RESPONSE",
