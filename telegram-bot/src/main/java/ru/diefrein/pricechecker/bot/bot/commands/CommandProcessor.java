@@ -17,7 +17,13 @@ public interface CommandProcessor {
     ProcessResult process(Command command, UserState state);
 
     /**
-     * @return type of command that is processed by this class
+     * Process callback to user's command
+     *
+     * @param command command with callback
+     * @param state   user's state
+     * @return message to be sent to user
      */
-    ProcessableCommandType getProcessableCommandType();
+    default ProcessResult processCallback(Command command, UserState state) {
+        throw new UnsupportedOperationException("Method is not implemented for callback commands");
+    }
 }

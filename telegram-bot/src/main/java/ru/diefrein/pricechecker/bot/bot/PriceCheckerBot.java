@@ -59,7 +59,9 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
             CommandProcessor processor = getCommandProcessor(commandType);
 
             log.info("Processing command={}, chatId={}, userState={}", commandType, chatId, state);
-            ProcessResult processResult = processor.process(command, state);
+            ProcessResult processResult = command.callbackData() == null
+                    ? processor.process(command, state)
+                    : processor.processCallback(command, state);
 
             if (processResult.newState() != state) {
                 userService.updateStateByTelegramId(chatId, processResult.newState());
@@ -114,7 +116,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
      * Send message into the chat with user
      *
      * @param processResult result of command handling (may contain text, buttons, etc)
-     * @param command user command
+     * @param command       user command
      */
     public void sendMessage(ProcessResult processResult, Command command) {
         try {

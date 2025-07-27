@@ -37,7 +37,8 @@ public class ResponseCreator {
         message.setChatId(command.chatId());
 
         if (processResult.buttonLayout() != null) {
-            addButtonLayout(message, processResult);
+            message.enableMarkdown(true);
+            message.setReplyMarkup(getButtonLayout(processResult));
         }
         return message;
     }
@@ -49,14 +50,13 @@ public class ResponseCreator {
         message.setMessageId(command.messageId());
 
         if (processResult.buttonLayout() != null) {
-            addButtonLayout(message, processResult);
+            message.enableMarkdown(true);
+            message.setReplyMarkup(getButtonLayout(processResult));
         }
         return message;
     }
 
-    private void addButtonLayout(SendMessage message, ProcessResult processResult) {
-        message.enableMarkdown(true);
-
+    private InlineKeyboardMarkup getButtonLayout(ProcessResult processResult) {
         List<List<InlineKeyboardButton>> keyboardButtonRows = new ArrayList<>();
 
         ButtonLayout buttonLayout = processResult.buttonLayout();
@@ -79,36 +79,6 @@ public class ResponseCreator {
 
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(keyboardButtonRows);
-        message.setReplyMarkup(markup);
-        message.setText(processResult.response());
-    }
-
-    private void addButtonLayout(EditMessageText message, ProcessResult processResult) {
-        message.enableMarkdown(true);
-
-        List<List<InlineKeyboardButton>> keyboardButtonRows = new ArrayList<>();
-
-        ButtonLayout buttonLayout = processResult.buttonLayout();
-        var sortedButtonsRows = buttonLayout.buttonRows().stream()
-                .sorted(Comparator.comparingInt(ButtonLayout.ButtonRow::rowNumber))
-                .toList();
-        for (ButtonLayout.ButtonRow sortedButtonsRow : sortedButtonsRows) {
-            List<Button> buttonsRow = sortedButtonsRow.buttons();
-
-            List<InlineKeyboardButton> keyboardButtonRow = new ArrayList<>();
-            for (Button button : buttonsRow) {
-                InlineKeyboardButton removeBtn = InlineKeyboardButton.builder()
-                        .text(button.displayText())
-                        .callbackData(button.callbackData())
-                        .build();
-                keyboardButtonRow.add(removeBtn);
-            }
-            keyboardButtonRows.add(keyboardButtonRow);
-        }
-
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        markup.setKeyboard(keyboardButtonRows);
-        message.setReplyMarkup(markup);
-        message.setText(processResult.response());
+        return markup;
     }
 }
