@@ -44,8 +44,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return new UserSubscription(
                 product.id(),
                 product.link(),
-                product.name(),
+                removeSpecialChars(product.name()),
                 product.actualPrice()
         );
+    }
+
+    private String removeSpecialChars(String str) {
+        return str.replace("*", "");
     }
 }
