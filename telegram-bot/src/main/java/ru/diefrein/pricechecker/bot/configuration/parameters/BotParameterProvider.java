@@ -62,12 +62,44 @@ public class BotParameterProvider {
             "SUBSCRIPTIONS_SUBSCRIPTION_TEMPLATE",
             "%s\n%s\n%s"
     );
+    public static final String REMOVE_BUTTON_SIGN = ConfigurationUtils.getEnv(
+            "REMOVE_BUTTON_SIGN",
+            "❌"
+    );
+    public static final String NEXT_BUTTON_SIGN = ConfigurationUtils.getEnv(
+            "NEXT_BUTTON_SIGN",
+            "➡️"
+    );
+    public static final String NEXT_BUTTON_DISPLAY_TEXT = ConfigurationUtils.getEnv(
+            "NEXT_BUTTON_DISPLAY_TEXT",
+            "Next "
+    );
+    public static final String PREV_BUTTON_SIGN = ConfigurationUtils.getEnv(
+            "PREV_BUTTON_SIGN",
+            "⬅️"
+    );
+    public static final String PREV_BUTTON_DISPLAY_TEXT = ConfigurationUtils.getEnv(
+            "PREV_BUTTON_DISPLAY_TEXT",
+            " Prev"
+    );
     public static final String SUBSCRIPTIONS_SUBSCRIPTION_BUTTON_TEMPLATE = ConfigurationUtils.getEnv(
             "SUBSCRIPTIONS_SUBSCRIPTION_BUTTON_TEMPLATE",
-            "❌ Remove (%s) %s"
+            REMOVE_BUTTON_SIGN + " Remove (%s) %s"
     );
     public static final String REMOVE_SUBSCRIPTION_RESPONSE = ConfigurationUtils.getEnv(
             "REMOVE_SUBSCRIPTION_RESPONSE",
             "Subscription has been successfully removed"
+    );
+    public static final String PRICE_DOWN_SIGN = ConfigurationUtils.getEnv(
+            "PRICE_DOWN_SIGN",
+            "\uD83D\uDFE2"
+    );
+    public static final String PRICE_UP_SIGN = ConfigurationUtils.getEnv(
+            "PRICE_UP_SIGN",
+            "\uD83D\uDD34"
+    );
+    public static final String PRICE_UPDATE_RESPONSE = ConfigurationUtils.getEnv(
+            "PRICE_UPDATE_RESPONSE",
+            "Received an update on %s:\n now price is %s, was: %s\nlink: %s"
     );
 }
