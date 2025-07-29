@@ -3,6 +3,7 @@ package ru.diefrein.pricechecker.bot.transport.kafka.consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.diefrein.pricechecker.bot.bot.PriceCheckerBot;
+import ru.diefrein.pricechecker.bot.configuration.parameters.BotParameterProvider;
 import ru.diefrein.pricechecker.bot.service.UserService;
 import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.transport.kafka.dto.PriceChangeEvent;
@@ -29,7 +30,11 @@ public class PriceChangeProcessor {
     }
 
     private String buildResponse(PriceChangeEvent event) {
-        return String.format("Received an update on %s:\n now price is %s, was: %s\nlink: %s",
-                event.productName(), event.newPrice(), event.oldPrice(), event.link());
+        String priceDirection = event.newPrice() < event.oldPrice()
+                ? BotParameterProvider.PRICE_DOWN_SIGN
+                : BotParameterProvider.PRICE_UP_SIGN;
+        String priceUpdateResponse = BotParameterProvider.PRICE_UPDATE_RESPONSE
+                .formatted(event.productName(), event.newPrice(), event.oldPrice(), event.link());
+        return "%s %s".formatted(priceDirection, priceUpdateResponse);
     }
 }

@@ -75,7 +75,7 @@ public class SubscriptionsProcessor implements CommandProcessor {
         for (int i = 0; i < subscriptions.data().size(); i++) {
             UserSubscription subscription = subscriptions.data().get(i);
             String displayText = BotParameterProvider.SUBSCRIPTIONS_SUBSCRIPTION_BUTTON_TEMPLATE
-                    .formatted(i, subscription.name());
+                    .formatted(i + 1, subscription.name());
             String callbackData = ProcessableCommandType.REMOVE_SUBSCRIPTION.name()
                     .concat("_")
                     .concat(subscription.checkerProductId().toString());
@@ -113,11 +113,11 @@ public class SubscriptionsProcessor implements CommandProcessor {
             throw new RuntimeException(e);
         }
         Button prevBtn = new Button(
-                "⬅️ Prev",
+                BotParameterProvider.PREV_BUTTON_SIGN + BotParameterProvider.PREV_BUTTON_DISPLAY_TEXT,
                 ProcessableCommandType.SUBSCRIPTIONS.name().concat("_").concat(pageRequestPrev)
         );
         Button nextBtn = new Button(
-                "Next ➡️",
+                 BotParameterProvider.NEXT_BUTTON_DISPLAY_TEXT + BotParameterProvider.NEXT_BUTTON_SIGN,
                 ProcessableCommandType.SUBSCRIPTIONS.name().concat("_").concat(pageRequestNext)
         );
         return new ButtonLayout.ButtonRow(subscriptions.data().size(), List.of(prevBtn, nextBtn));
