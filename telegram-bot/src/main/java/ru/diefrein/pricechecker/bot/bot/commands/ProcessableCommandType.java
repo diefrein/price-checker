@@ -3,17 +3,28 @@ package ru.diefrein.pricechecker.bot.bot.commands;
 import ru.diefrein.pricechecker.bot.bot.exception.IllegalCommandException;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 
+import java.util.List;
+
 public enum ProcessableCommandType {
-    START("start"),
-    REGISTER("register"),
-    SUBSCRIBE("subscribe"),
-    SUBSCRIPTIONS("subscriptions"),
-    REMOVE_SUBSCRIPTION("remove_subscription");
+    START("start", "Start the bot"),
+    REGISTER("register", "Register your profile"),
+    SUBSCRIBE("subscribe", "Add a product to track"),
+    SUBSCRIPTIONS("subscriptions", "List all tracked products"),
+    REMOVE_SUBSCRIPTION("remove_subscription", "List all tracked products");
 
     private final String command;
+    private final String description;
 
-    ProcessableCommandType(String command) {
+    ProcessableCommandType(String command, String description) {
         this.command = command;
+        this.description = description;
+    }
+
+    /**
+     * @return list of commands that are displayed in menu
+     */
+    public static List<ProcessableCommandType> getMenuCommands() {
+        return List.of(START, REGISTER, SUBSCRIBE, SUBSCRIPTIONS);
     }
 
     /**
@@ -50,5 +61,13 @@ public enum ProcessableCommandType {
             }
         }
         throw new IllegalCommandException("Text=%s doesn't contain processable commands".formatted(text));
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
