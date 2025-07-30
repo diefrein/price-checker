@@ -3,10 +3,13 @@ package ru.diefrein.pricechecker.bot.bot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import ru.diefrein.pricechecker.bot.bot.commands.Command;
@@ -23,6 +26,7 @@ import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.exception.DuplicateEntityException;
 import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 
+import java.util.List;
 import java.util.Map;
 
 public class PriceCheckerBot extends TelegramLongPollingBot {
@@ -39,6 +43,7 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         this.processors = processors;
         this.userService = userService;
         this.responseCreator = responseCreator;
+        registerBotMenu(processors);
     }
 
     @Override
@@ -124,6 +129,27 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error("Failed to send message", e);
         }
+    }
+
+    private void registerBotMenu(Map<ProcessableCommandType, CommandProcessor> processors) {
+        List<BotCommand> commandList = processors.keySet().stream()
+                .filter(commandType -> ProcessableCommandType.getMenuCommands().contains(commandType))
+                .map(this::getFromProcessableCommandType)
+                .toList();
+
+        SetMyCommands setMyCommands = new SetMyCommands();
+        setMyCommands.setCommands(commandList);
+        setMyCommands.setScope(new BotCommandScopeDefault());
+
+        try {
+            execute(setMyCommands);
+        } catch (TelegramApiException e) {
+            log.error("Failed to initialize menu", e);
+        }
+    }
+
+    private BotCommand getFromProcessableCommandType(ProcessableCommandType commandType) {
+        return new BotCommand("/%s".formatted(commandType.getCommand()), commandType.getDescription());
     }
 
     private Command map(Update update) {
