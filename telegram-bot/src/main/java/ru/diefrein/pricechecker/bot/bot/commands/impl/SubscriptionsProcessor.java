@@ -90,36 +90,42 @@ public class SubscriptionsProcessor implements CommandProcessor {
     }
 
     private ButtonLayout.ButtonRow getPaginationButtons(Page<UserSubscription> subscriptions) {
-        if (subscriptions.data().isEmpty()) {
-            return null;
+        List<Button> buttons = new ArrayList<>();
+        PageRequest currentPageRequest = subscriptions.meta().pageRequest();
+
+        if (currentPageRequest.pageNumber() > 1) {
+            buttons.add(getPrevButton(currentPageRequest));
         }
 
-        String pageRequestPrev = null;
+        if (!subscriptions.data().isEmpty()) {
+            buttons.add(getNextButton(currentPageRequest));
+        }
+        return new ButtonLayout.ButtonRow(subscriptions.data().size(), buttons);
+    }
+
+    private Button getPrevButton(PageRequest pageRequest) {
+        return getButton(
+                new PageRequest(pageRequest.pageSize(), pageRequest.pageNumber() - 1),
+                BotParameterProvider.PREV_BUTTON_SIGN + BotParameterProvider.PREV_BUTTON_DISPLAY_TEXT
+        );
+    }
+
+    private Button getNextButton(PageRequest pageRequest) {
+        return getButton(
+                new PageRequest(pageRequest.pageSize(), pageRequest.pageNumber() + 1),
+                BotParameterProvider.NEXT_BUTTON_DISPLAY_TEXT + BotParameterProvider.NEXT_BUTTON_SIGN
+        );
+    }
+
+    private Button getButton(PageRequest newPageRequest, String displayText) {
         try {
-            pageRequestPrev = objectMapper.writeValueAsString(new PageRequest(
-                    subscriptions.meta().pageRequest().pageSize(),
-                    subscriptions.meta().pageRequest().pageNumber() - 1
-            ));
+            String pageRequest = objectMapper.writeValueAsString(newPageRequest);
+            return new Button(
+                    displayText,
+                    ProcessableCommandType.SUBSCRIPTIONS.name().concat("_").concat(pageRequest)
+            );
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        String pageRequestNext = null;
-        try {
-            pageRequestNext = objectMapper.writeValueAsString(new PageRequest(
-                    subscriptions.meta().pageRequest().pageSize(),
-                    subscriptions.meta().pageRequest().pageNumber() + 1
-            ));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        Button prevBtn = new Button(
-                BotParameterProvider.PREV_BUTTON_SIGN + BotParameterProvider.PREV_BUTTON_DISPLAY_TEXT,
-                ProcessableCommandType.SUBSCRIPTIONS.name().concat("_").concat(pageRequestPrev)
-        );
-        Button nextBtn = new Button(
-                 BotParameterProvider.NEXT_BUTTON_DISPLAY_TEXT + BotParameterProvider.NEXT_BUTTON_SIGN,
-                ProcessableCommandType.SUBSCRIPTIONS.name().concat("_").concat(pageRequestNext)
-        );
-        return new ButtonLayout.ButtonRow(subscriptions.data().size(), List.of(prevBtn, nextBtn));
     }
 }
