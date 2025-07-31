@@ -36,7 +36,7 @@ public class PriceChangeProducer {
     /**
      * Send event to default topic with specified key
      *
-     * @param key key of message
+     * @param key   key of message
      * @param event price update event
      */
     public void send(String key, PriceChangeEvent event) {

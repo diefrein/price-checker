@@ -14,8 +14,8 @@ public interface ProductHistoryRepository {
     /**
      * Create history entry
      *
-     * @param productId id of followed product
-     * @param price new price
+     * @param productId       id of followed product
+     * @param price           new price
      * @param priceAtDateTime moment of saving
      */
     void create(UUID productId, Double price, LocalDateTime priceAtDateTime);

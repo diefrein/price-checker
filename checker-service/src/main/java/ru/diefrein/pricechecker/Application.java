@@ -14,7 +14,6 @@ import ru.diefrein.pricechecker.service.SiteParser;
 import ru.diefrein.pricechecker.service.UserService;
 import ru.diefrein.pricechecker.service.dto.enums.ProcessableSite;
 import ru.diefrein.pricechecker.service.impl.GoldAppleParser;
-import ru.diefrein.pricechecker.service.impl.LamodaParser;
 import ru.diefrein.pricechecker.service.impl.ProductParserImpl;
 import ru.diefrein.pricechecker.service.impl.ProductServiceImpl;
 import ru.diefrein.pricechecker.service.impl.UserServiceImpl;
@@ -92,8 +91,7 @@ public class Application {
 
     private static Map<ProcessableSite, SiteParser> siteParser() {
         return Map.of(
-                ProcessableSite.GOLD_APPLE, new GoldAppleParser(),
-                ProcessableSite.LAMODA, new LamodaParser()
+                ProcessableSite.GOLD_APPLE, new GoldAppleParser()
         );
     }
 

@@ -5,7 +5,6 @@ import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 import ru.diefrein.pricechecker.storage.entity.Product;
 
 import java.sql.Connection;
-import java.util.List;
 import java.util.UUID;
 
 /**
