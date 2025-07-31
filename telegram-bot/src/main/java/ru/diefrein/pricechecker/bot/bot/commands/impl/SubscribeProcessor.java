@@ -6,6 +6,7 @@ import ru.diefrein.pricechecker.bot.bot.commands.ProcessResult;
 import ru.diefrein.pricechecker.bot.bot.state.UserState;
 import ru.diefrein.pricechecker.bot.configuration.parameters.BotParameterProvider;
 import ru.diefrein.pricechecker.bot.service.SubscriptionService;
+import ru.diefrein.pricechecker.common.util.UrlUtils;
 
 public class SubscribeProcessor implements CommandProcessor {
 
@@ -36,11 +37,7 @@ public class SubscribeProcessor implements CommandProcessor {
 
     private ProcessResult processWaitForLink(Command command) {
         String productLink = command.text().trim();
-        try {
-            subscriptionService.subscribe(command.chatId(), productLink);
-        } catch (Exception e) {
-            return ProcessResult.toInitialState(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_ERROR_RESPONSE);
-        }
+        subscriptionService.subscribe(command.chatId(), UrlUtils.extractUrl(productLink));
         return ProcessResult.toInitialState(BotParameterProvider.SUBSCRIBE_WAIT_FOR_LINK_RESPONSE);
     }
 }

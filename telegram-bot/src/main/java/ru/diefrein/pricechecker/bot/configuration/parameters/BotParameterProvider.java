@@ -42,10 +42,6 @@ public class BotParameterProvider {
             "SUBSCRIBE_WAIT_FOR_LINK_RESPONSE",
             "Product saved successfully!"
     );
-    public static final String SUBSCRIBE_WAIT_FOR_LINK_ERROR_RESPONSE = ConfigurationUtils.getEnv(
-            "SUBSCRIBE_INITIAL_RESPONSE",
-            "Error while saving product, please retry request later"
-    );
     public static final String USER_ALREADY_EXISTS_RESPONSE = ConfigurationUtils.getEnv(
             "USER_ALREADY_EXISTS_RESPONSE",
             "User already exists. Please use /start to find available commands"
