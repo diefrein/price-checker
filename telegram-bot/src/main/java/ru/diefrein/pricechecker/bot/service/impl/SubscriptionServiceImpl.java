@@ -23,14 +23,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public void subscribe(long telegramId, String link) {
-        User user = userRepository.findByTelegramId(telegramId);
+    public void subscribe(long chatId, String link) {
+        User user = userRepository.findByTelegramId(chatId);
         checkerServiceClient.createProduct(new CreateCheckerProductRequest(user.checkerUserId(), link));
     }
 
     @Override
-    public Page<UserSubscription> getUserSubscriptions(long telegramId, PageRequest pageRequest) {
-        User user = userRepository.findByTelegramId(telegramId);
+    public Page<UserSubscription> getUserSubscriptions(long chatId, PageRequest pageRequest) {
+        User user = userRepository.findByTelegramId(chatId);
         Page<CheckerProduct> products = checkerServiceClient.getUserProducts(user.checkerUserId(), pageRequest);
         return new Page<>(products.data().stream().map(this::map).toList(), products.meta());
     }

@@ -17,17 +17,17 @@ import java.util.UUID;
 public class UserRepositoryImpl implements UserRepository {
 
     private static final String INSERT_USER_STATEMENT = """
-            INSERT INTO checker_bot.users (checker_user_id, telegram_id, state)
+            INSERT INTO checker_bot.users (checker_user_id, chat_id, state)
             VALUES (?, ?, ?)
             """;
-    private static final String SELECT_USER_BY_TELEGRAM_ID_STATEMENT = """
-            SELECT * FROM checker_bot.users WHERE telegram_id = ?
+    private static final String SELECT_USER_BY_CHAT_ID_STATEMENT = """
+            SELECT * FROM checker_bot.users WHERE chat_id = ?
             """;
     private static final String SELECT_USER_BY_CHECKER_ID_STATEMENT = """
             SELECT * FROM checker_bot.users WHERE checker_user_id = ?
             """;
-    private static final String UPDATE_USER_STATE_BY_TELEGRAM_ID_STATEMENT = """
-            UPDATE checker_bot.users SET state = ? WHERE telegram_id = ?
+    private static final String UPDATE_USER_STATE_BY_CHAT_ID_STATEMENT = """
+            UPDATE checker_bot.users SET state = ? WHERE chat_id = ?
             """;
 
     private final DataSource dataSource;
@@ -37,12 +37,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void create(long telegramId, UUID checkerUserId) {
+    public void create(long chatId, UUID checkerUserId) {
         UserState initialState = UserState.INITIAL;
         try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(INSERT_USER_STATEMENT)) {
                 stmt.setObject(1, checkerUserId);
-                stmt.setLong(2, telegramId);
+                stmt.setLong(2, chatId);
                 stmt.setString(3, initialState.name());
                 stmt.executeUpdate();
             }
@@ -52,13 +52,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByTelegramId(long telegramId) {
+    public User findByTelegramId(long chatId) {
         try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(SELECT_USER_BY_TELEGRAM_ID_STATEMENT)) {
-                stmt.setObject(1, telegramId);
+            try (PreparedStatement stmt = conn.prepareStatement(SELECT_USER_BY_CHAT_ID_STATEMENT)) {
+                stmt.setObject(1, chatId);
                 ResultSet rs = stmt.executeQuery();
                 if (!rs.next()) {
-                    throw new EntityNotFoundException("User with chatId=%s doesn't exist".formatted(telegramId));
+                    throw new EntityNotFoundException("User with chatId=%s doesn't exist".formatted(chatId));
                 }
                 return map(rs);
             }
@@ -84,11 +84,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateStateByTelegramId(long telegramId, UserState state) {
+    public void updateStateByTelegramId(long chatId, UserState state) {
         try (Connection conn = dataSource.getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(UPDATE_USER_STATE_BY_TELEGRAM_ID_STATEMENT)) {
+            try (PreparedStatement stmt = conn.prepareStatement(UPDATE_USER_STATE_BY_CHAT_ID_STATEMENT)) {
                 stmt.setString(1, state.name());
-                stmt.setLong(2, telegramId);
+                stmt.setLong(2, chatId);
                 stmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private User map(ResultSet rs) throws SQLException {
         return new User(
-                rs.getLong("telegram_id"),
+                rs.getLong("chat_id"),
                 UUID.fromString(rs.getString("checker_user_id")),
                 UserState.valueOf(rs.getString("state"))
         );

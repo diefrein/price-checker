@@ -22,19 +22,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(long telegramId, String name) {
+    public void create(long chatId, String name) {
         try {
-            findByTelegramId(telegramId);
-            throw new DuplicateEntityException("User with telegramId=%s already exists".formatted(telegramId));
+            findByTelegramId(chatId);
+            throw new DuplicateEntityException("User with chatId=%s already exists".formatted(chatId));
         } catch (EntityNotFoundException e) {
             UUID checkerUserId = checkerServiceClient.createUser(new CreateCheckerUserRequest(name, true));
-            repository.create(telegramId, checkerUserId);
+            repository.create(chatId, checkerUserId);
         }
     }
 
     @Override
-    public User findByTelegramId(long telegramId) {
-        return repository.findByTelegramId(telegramId);
+    public User findByTelegramId(long chatId) {
+        return repository.findByTelegramId(chatId);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateStateByTelegramId(long telegramId, UserState state) {
-        repository.updateStateByTelegramId(telegramId, state);
+    public void updateStateByTelegramId(long chatId, UserState state) {
+        repository.updateStateByTelegramId(chatId, state);
     }
 }

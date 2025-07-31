@@ -25,7 +25,7 @@ public class PriceChangeProcessor {
         log.info("Received PriceChangeEvent={}", event);
         if (!event.newPrice().equals(event.oldPrice())) {
             User user = userService.findByCheckerUserId(event.userId());
-            bot.sendMessage(user.telegramId(), buildResponse(event));
+            bot.sendMessage(user.chatId(), buildResponse(event));
         }
     }
 
