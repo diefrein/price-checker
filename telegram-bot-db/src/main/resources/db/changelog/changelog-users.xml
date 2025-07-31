@@ -3,21 +3,15 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0001" author="diefrein" runAlways="true">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="checker_bot.users"/>
-            </not>
-        </preConditions>
-
+    <changeSet id="0001" author="diefrein" runAlways="false">
         <sqlFile path="scripts/create_users.sql" relativeToChangelogFile="true"/>
     </changeSet>
 
-    <changeSet id="0002" author="diefrein" runAlways="true">
-        <preConditions onFail="MARK_RAN">
-            <tableExists tableName="checker_bot.users"/>
-        </preConditions>
-
+    <changeSet id="0002" author="diefrein" runAlways="false">
         <sqlFile path="scripts/update_users_add_state.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet id="0003" author="diefrein" runAlways="false">
+        <sqlFile path="scripts/update_users_rename_telegram_id.sql" relativeToChangelogFile="true"/>
     </changeSet>
 </databaseChangeLog>
