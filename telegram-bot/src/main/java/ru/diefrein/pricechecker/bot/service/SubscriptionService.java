@@ -16,19 +16,19 @@ public interface SubscriptionService {
     /**
      * Subscribe to updates
      *
-     * @param telegramId id of chat with user
+     * @param chatId id of chat with user
      * @param link       link to the product which will be followed
      */
-    void subscribe(long telegramId, String link);
+    void subscribe(long chatId, String link);
 
     /**
      * Get page of user's subscriptions
      *
-     * @param telegramId id of chat with user
+     * @param chatId id of chat with user
      * @param pageRequest pagination parameters
      * @return page of user's subscriptions
      */
-    Page<UserSubscription> getUserSubscriptions(long telegramId, PageRequest pageRequest);
+    Page<UserSubscription> getUserSubscriptions(long chatId, PageRequest pageRequest);
 
     /**
      * Remove subscription

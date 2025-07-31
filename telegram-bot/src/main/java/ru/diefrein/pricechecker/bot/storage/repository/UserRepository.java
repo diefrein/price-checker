@@ -14,19 +14,19 @@ public interface UserRepository {
     /**
      * Create user
      *
-     * @param telegramId id of chat with user
+     * @param chatId id of chat with user
      * @param checkerUserId if of user in checker-db
      */
-    void create(long telegramId, UUID checkerUserId);
+    void create(long chatId, UUID checkerUserId);
 
     /**
      * Get user by chat id
      *
-     * @param telegramId id of chat with user
+     * @param chatId id of chat with user
      * @return user
      * @throws ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException if no user found
      */
-    User findByTelegramId(long telegramId);
+    User findByTelegramId(long chatId);
 
     /**
      * Get user by checker_user_id
@@ -40,8 +40,8 @@ public interface UserRepository {
     /**
      * Updates state of user by chat id
      *
-     * @param telegramId id of chat with user
+     * @param chatId id of chat with user
      * @param state new user's state
      */
-    void updateStateByTelegramId(long telegramId, UserState state);
+    void updateStateByTelegramId(long chatId, UserState state);
 }
