@@ -1,7 +1,6 @@
 package ru.diefrein.pricechecker.service;
 
 import ru.diefrein.pricechecker.service.dto.ParsedProduct;
-import ru.diefrein.pricechecker.service.dto.enums.ProcessableSite;
 
 /**
  * Service that parses specified site to retrieve product info
@@ -15,9 +14,4 @@ public interface SiteParser {
      * @return product's information
      */
     ParsedProduct getProduct(String link);
-
-    /**
-     * @return site that is parsable by that class
-     */
-    ProcessableSite getProcessableSite();
 }

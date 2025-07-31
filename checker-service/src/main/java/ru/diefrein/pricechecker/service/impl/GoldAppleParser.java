@@ -4,7 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import ru.diefrein.pricechecker.service.SiteParser;
 import ru.diefrein.pricechecker.service.dto.ParsedProduct;
-import ru.diefrein.pricechecker.service.dto.enums.ProcessableSite;
 import ru.diefrein.pricechecker.service.exception.PriceCheckerException;
 import ru.diefrein.pricechecker.util.ParserUtils;
 
@@ -18,11 +17,6 @@ public class GoldAppleParser implements SiteParser {
         String price = getPrice(doc, link);
 
         return new ParsedProduct(name, Double.parseDouble(price));
-    }
-
-    @Override
-    public ProcessableSite getProcessableSite() {
-        return ProcessableSite.GOLD_APPLE;
     }
 
     private String getName(Document doc) {

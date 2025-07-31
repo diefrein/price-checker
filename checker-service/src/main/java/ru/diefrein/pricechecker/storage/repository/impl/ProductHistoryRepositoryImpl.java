@@ -1,7 +1,6 @@
 package ru.diefrein.pricechecker.storage.repository.impl;
 
 import ru.diefrein.pricechecker.storage.entity.ProductHistory;
-import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
 import ru.diefrein.pricechecker.storage.repository.ProductHistoryRepository;
 
 import javax.sql.DataSource;

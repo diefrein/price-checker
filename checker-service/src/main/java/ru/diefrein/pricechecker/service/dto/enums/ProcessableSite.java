@@ -1,7 +1,7 @@
 package ru.diefrein.pricechecker.service.dto.enums;
 
 public enum ProcessableSite {
-    LAMODA("lamoda"), GOLD_APPLE("goldapple");
+    GOLD_APPLE("goldapple");
 
     private final String domainName;
 
