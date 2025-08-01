@@ -1,7 +1,8 @@
 package ru.diefrein.pricechecker.service.dto.enums;
 
 public enum ProcessableSite {
-    GOLD_APPLE("goldapple");
+    GOLD_APPLE("goldapple"),
+    STORE77("store77");
 
     private final String domainName;
 

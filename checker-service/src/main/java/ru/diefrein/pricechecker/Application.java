@@ -16,6 +16,7 @@ import ru.diefrein.pricechecker.service.dto.enums.ProcessableSite;
 import ru.diefrein.pricechecker.service.impl.GoldAppleParser;
 import ru.diefrein.pricechecker.service.impl.ProductParserImpl;
 import ru.diefrein.pricechecker.service.impl.ProductServiceImpl;
+import ru.diefrein.pricechecker.service.impl.Store77Parser;
 import ru.diefrein.pricechecker.service.impl.UserServiceImpl;
 import ru.diefrein.pricechecker.service.scheduler.ProductPriceScheduler;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
@@ -38,7 +39,13 @@ public class Application {
 
     public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
+        initApplication();
+        long stop = System.currentTimeMillis();
+        long startupTimeMs = stop - start;
+        log.info("Application started in {} ms", startupTimeMs);
+    }
 
+    private static void initApplication() throws IOException {
         ConnectionPool connectionPool = new ConnectionPool();
         UserRepository userRepository = new UserRepositoryImpl(connectionPool.getDataSource());
 
@@ -54,9 +61,6 @@ public class Application {
         httpServerConfigurator.initHttpServer();
 
         ProductPriceScheduler productPriceScheduler = new ProductPriceScheduler(productService);
-        long stop = System.currentTimeMillis();
-        long startupTimeMs = stop - start;
-        log.info("Application started in {} ms", startupTimeMs);
 
         Runtime.getRuntime().addShutdownHook(new Thread(priceChangeProducer::close));
     }
@@ -91,7 +95,8 @@ public class Application {
 
     private static Map<ProcessableSite, SiteParser> siteParser() {
         return Map.of(
-                ProcessableSite.GOLD_APPLE, new GoldAppleParser()
+                ProcessableSite.GOLD_APPLE, new GoldAppleParser(),
+                ProcessableSite.STORE77, new Store77Parser()
         );
     }
 
