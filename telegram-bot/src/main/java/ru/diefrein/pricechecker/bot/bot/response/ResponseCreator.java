@@ -37,7 +37,6 @@ public class ResponseCreator {
         message.setChatId(command.chatId());
 
         if (processResult.buttonLayout() != null) {
-            message.enableMarkdown(true);
             message.setReplyMarkup(getButtonLayout(processResult));
         }
         return message;
@@ -50,7 +49,6 @@ public class ResponseCreator {
         message.setMessageId(command.messageId());
 
         if (processResult.buttonLayout() != null) {
-            message.enableMarkdown(true);
             message.setReplyMarkup(getButtonLayout(processResult));
         }
         return message;
