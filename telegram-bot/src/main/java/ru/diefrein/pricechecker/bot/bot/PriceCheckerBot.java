@@ -3,6 +3,7 @@ package ru.diefrein.pricechecker.bot.bot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MaybeInaccessibleMessage;
@@ -26,6 +27,7 @@ import ru.diefrein.pricechecker.bot.storage.entity.User;
 import ru.diefrein.pricechecker.bot.storage.exception.DuplicateEntityException;
 import ru.diefrein.pricechecker.bot.storage.exception.EntityNotFoundException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +127,9 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
      */
     public void sendMessage(ProcessResult processResult, Command command) {
         try {
-            execute(responseCreator.createResponse(processResult, command));
+            BotApiMethod<?> response = responseCreator.createResponse(processResult, command);
+            log.info("Sending response={} to chatId={}", response, command.chatId());
+            execute(response);
         } catch (TelegramApiException e) {
             log.error("Failed to send message", e);
         }
