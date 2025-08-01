@@ -97,7 +97,7 @@ public class SubscriptionsProcessor implements CommandProcessor {
             buttons.add(getPrevButton(currentPageRequest));
         }
 
-        if (!subscriptions.data().isEmpty()) {
+        if (subscriptions.meta().hasNext()) {
             buttons.add(getNextButton(currentPageRequest));
         }
         return new ButtonLayout.ButtonRow(subscriptions.data().size(), buttons);
