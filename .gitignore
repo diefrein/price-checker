@@ -1,4 +1,5 @@
 .env
+keycloak.env
 
 .gradle
 build/

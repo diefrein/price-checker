@@ -120,9 +120,34 @@ services:
     env_file: ./telegram-bot/.env
     networks:
       - pricechecker-network
+        
+  keycloak-db:
+    image: postgres:16-alpine
+    container_name: keycloak_postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - postgres-data-keycloak:/var/lib/postgresql/data
+    networks:
+      - pricechecker-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.2
+    container_name: keycloak
+    command: start-dev
+    env_file: keycloak.env
+    ports:
+      - "8081:8080"
+    depends_on:
+      - keycloak-db
+    networks:
+      - pricechecker-network
 
 volumes:
   postgres-data-checker:
   postgres-data-bot:
+  postgres-data-keycloak:
 networks:
   pricechecker-network:
