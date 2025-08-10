@@ -11,6 +11,7 @@ public class ControllerUtils {
     public static final String PATCH = "PATCH";
     public static final String GET = "GET";
     public static final String DELETE = "DELETE";
+    public static final String OPTIONS = "OPTIONS";
 
     public static String getPathAfterPrefix(String path, String prefix) {
         int index = path.indexOf(prefix);
