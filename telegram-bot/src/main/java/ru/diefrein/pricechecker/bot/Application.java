@@ -11,6 +11,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.diefrein.pricechecker.bot.bot.PriceCheckerBot;
 import ru.diefrein.pricechecker.bot.bot.commands.CommandProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.ProcessableCommandType;
+import ru.diefrein.pricechecker.bot.bot.commands.impl.CheckSubscriptionUpdatesProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.RegisterProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.RemoveSubscriptionProcessor;
 import ru.diefrein.pricechecker.bot.bot.commands.impl.StartProcessor;
@@ -96,6 +97,8 @@ public class Application {
                 new SubscriptionsProcessor(subscriptionService, objectMapper));
         processors.put(ProcessableCommandType.REMOVE_SUBSCRIPTION,
                 new RemoveSubscriptionProcessor(subscriptionService));
+        processors.put(ProcessableCommandType.CHECK_SUBSCRIPTION_UPDATES,
+                new CheckSubscriptionUpdatesProcessor(subscriptionService));
         return processors;
     }
 
