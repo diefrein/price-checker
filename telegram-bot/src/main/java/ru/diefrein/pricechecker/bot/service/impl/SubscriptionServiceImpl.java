@@ -40,6 +40,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         checkerServiceClient.removeProduct(productId);
     }
 
+    @Override
+    public void checkForUpdates(long chatId) {
+        User user = userRepository.findByTelegramId(chatId);
+        checkerServiceClient.checkForUpdates(user.checkerUserId());
+    }
+
     private UserSubscription map(CheckerProduct product) {
         return new UserSubscription(
                 product.id(),

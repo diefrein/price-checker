@@ -36,4 +36,11 @@ public interface SubscriptionService {
      * @param productId id of product in checker-db
      */
     void remove(UUID productId);
+
+    /**
+     * Initiate update check for given user
+     *
+     * @param chatId id of chat with user
+     */
+    void checkForUpdates(long chatId);
 }
