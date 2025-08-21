@@ -8,6 +8,7 @@ import ru.diefrein.pricechecker.configuration.parameters.ProductServiceParameter
 import ru.diefrein.pricechecker.service.ProductParser;
 import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.service.dto.ParsedProduct;
+import ru.diefrein.pricechecker.service.exception.PriceCheckerException;
 import ru.diefrein.pricechecker.storage.entity.Product;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.pool.ConnectionPool;
@@ -109,22 +110,33 @@ public class ProductServiceImpl implements ProductService {
                     new PageRequest(ProductServiceParameterProvider.PRODUCTS_PAGE_SIZE, pageNumber++)
             );
             for (Product product : products.data()) {
-                ParsedProduct parsedProduct = parser.getProduct(product.link());
-                if (isProductInfoChanged(parsedProduct, product)) {
-                    productRepository.update(
-                            conn,
-                            product.id(),
-                            parsedProduct.name(),
-                            parsedProduct.actualPrice()
-                    );
-                    priceChangeProducer.send(PriceChangeEvent.fromProductUpdate(product, parsedProduct));
-                }
+                processProduct(conn, product);
             }
             processedCount += products.data().size();
         } while (products.meta().hasNext());
 
         if (processedCount > 0) {
             log.info("Processed {} products for user with id={}", processedCount, userId);
+        }
+    }
+
+    private void processProduct(Connection conn, Product product) {
+        ParsedProduct parsedProduct;
+        try {
+            parsedProduct = parser.getProduct(product.link());
+        } catch (PriceCheckerException e) {
+            log.error("Unable to get updates for product with id={}", product.id());
+            return;
+        }
+
+        if (isProductInfoChanged(parsedProduct, product)) {
+            productRepository.update(
+                    conn,
+                    product.id(),
+                    parsedProduct.name(),
+                    parsedProduct.actualPrice()
+            );
+            priceChangeProducer.send(PriceChangeEvent.fromProductUpdate(product, parsedProduct));
         }
     }
 
