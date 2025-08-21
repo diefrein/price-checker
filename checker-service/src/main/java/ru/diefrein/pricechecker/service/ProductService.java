@@ -25,6 +25,13 @@ public interface ProductService {
     void checkForUpdates();
 
     /**
+     * Check for product's info updates and notify selected user
+     *
+     * @param userId id of user
+     */
+    void checkForUpdates(UUID userId);
+
+    /**
      * Get page of products by user who follows them
      *
      * @param userId      id of user
