@@ -44,4 +44,11 @@ public interface CheckerServiceClient {
      * @param productId id of product in checker-db
      */
     void removeProduct(UUID productId);
+
+    /**
+     * Initiate update check for given user
+     *
+     * @param checkerUserId id of user in checker-db
+     */
+    void checkForUpdates(UUID checkerUserId);
 }

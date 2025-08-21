@@ -11,6 +11,7 @@ import ru.diefrein.pricechecker.common.storage.dto.Page;
 import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class SubscriptionServiceImpl implements SubscriptionService {
 
@@ -38,6 +39,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public void remove(UUID productId) {
         checkerServiceClient.removeProduct(productId);
+    }
+
+    @Override
+    public void checkForUpdatesAsync(long chatId) {
+        User user = userRepository.findByTelegramId(chatId);
+        CompletableFuture.runAsync(() -> checkerServiceClient.checkForUpdates(user.checkerUserId()));
     }
 
     private UserSubscription map(CheckerProduct product) {

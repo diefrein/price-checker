@@ -5,7 +5,6 @@ import ru.diefrein.pricechecker.bot.service.dto.UserSubscription;
 import ru.diefrein.pricechecker.common.storage.dto.Page;
 import ru.diefrein.pricechecker.common.storage.dto.PageRequest;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,4 +35,11 @@ public interface SubscriptionService {
      * @param productId id of product in checker-db
      */
     void remove(UUID productId);
+
+    /**
+     * Initiate update check for given user in thread executor
+     *
+     * @param chatId id of chat with user
+     */
+    void checkForUpdatesAsync(long chatId);
 }

@@ -10,7 +10,8 @@ public enum ProcessableCommandType {
     REGISTER("register", "Register your profile"),
     SUBSCRIBE("subscribe", "Add a product to track"),
     SUBSCRIPTIONS("subscriptions", "List all tracked products"),
-    REMOVE_SUBSCRIPTION("remove_subscription", "List all tracked products");
+    REMOVE_SUBSCRIPTION("remove_subscription", "List all tracked products"),
+    CHECK_SUBSCRIPTION_UPDATES("check_subscription_updates", "Check for updates of all subscriptions");
 
     private final String command;
     private final String description;
@@ -24,7 +25,7 @@ public enum ProcessableCommandType {
      * @return list of commands that are displayed in menu
      */
     public static List<ProcessableCommandType> getMenuCommands() {
-        return List.of(START, REGISTER, SUBSCRIBE, SUBSCRIPTIONS);
+        return List.of(START, REGISTER, SUBSCRIBE, SUBSCRIPTIONS, CHECK_SUBSCRIPTION_UPDATES);
     }
 
     /**
