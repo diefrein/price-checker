@@ -76,19 +76,19 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
             sendMessage(processResult, command);
         } catch (IllegalCommandException e) {
             log.error("Illegal command, chatId={}", chatId, e);
-            sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
+            setStateToInitialAndSendErrorMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
         } catch (CommandProcessorNotFoundException e) {
             log.error("No command processor found, chatId={}", chatId, e);
-            sendMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
+            setStateToInitialAndSendErrorMessage(chatId, BotParameterProvider.UNKNOWN_COMMAND_RESPONSE);
         } catch (EntityNotFoundException e) {
             log.error("User not found for chatId={}", chatId, e);
-            sendMessage(chatId, BotParameterProvider.USER_NOT_FOUND_RESPONSE);
+            setStateToInitialAndSendErrorMessage(chatId, BotParameterProvider.USER_NOT_FOUND_RESPONSE);
         } catch (DuplicateEntityException e) {
             log.error("Duplicate entity found for chatId={}", chatId, e);
-            sendMessage(chatId, BotParameterProvider.USER_ALREADY_EXISTS_RESPONSE);
+            setStateToInitialAndSendErrorMessage(chatId, BotParameterProvider.USER_ALREADY_EXISTS_RESPONSE);
         } catch (Exception e) {
             log.error("Exception while handling command, chatId={}", chatId, e);
-            sendMessage(chatId, BotParameterProvider.GENERAL_ERROR_RESPONSE);
+            setStateToInitialAndSendErrorMessage(chatId, BotParameterProvider.GENERAL_ERROR_RESPONSE);
         }
     }
 
@@ -194,5 +194,10 @@ public class PriceCheckerBot extends TelegramLongPollingBot {
         } catch (EntityNotFoundException e) {
             return UserState.INITIAL;
         }
+    }
+
+    private void setStateToInitialAndSendErrorMessage(long chatId, String message) {
+        userService.updateStateByTelegramId(chatId, UserState.INITIAL);
+        sendMessage(chatId, message);
     }
 }
