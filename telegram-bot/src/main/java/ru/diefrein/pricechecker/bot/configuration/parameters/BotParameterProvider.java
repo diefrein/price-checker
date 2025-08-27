@@ -98,8 +98,4 @@ public class BotParameterProvider {
             "PRICE_UPDATE_RESPONSE",
             "Received an update on %s:\n now price is %s, was: %s\nlink: %s"
     );
-    public static final String CHECK_SUBSCRIPTION_UPDATES_RESPONSE = ConfigurationUtils.getEnv(
-            "CHECK_SUBSCRIPTION_UPDATES_RESPONSE",
-            "Command in process, updates will be listed in messages below (if exist)"
-    );
 }

@@ -104,12 +104,8 @@ public class Application {
                                                          ProductService productService,
                                                          ObjectMapper objectMapper) {
         return Map.of(
-                "/users", new LoggingAndOptionsHandlerDecorator(
-                        new UserHandler(userService, productService, objectMapper)
-                ),
-                "/products", new LoggingAndOptionsHandlerDecorator(
-                        new ProductHandler(productService, objectMapper)
-                )
+                "/users", new LoggingAndOptionsHandlerDecorator(new UserHandler(userService, objectMapper)),
+                "/products", new LoggingAndOptionsHandlerDecorator(new ProductHandler(productService, objectMapper))
         );
     }
 }

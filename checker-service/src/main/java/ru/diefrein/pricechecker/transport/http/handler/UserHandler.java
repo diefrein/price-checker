@@ -5,7 +5,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.diefrein.pricechecker.service.ProductService;
 import ru.diefrein.pricechecker.service.UserService;
 import ru.diefrein.pricechecker.storage.entity.User;
 import ru.diefrein.pricechecker.storage.exception.EntityNotFoundException;
@@ -27,14 +26,10 @@ public class UserHandler implements HttpHandler {
 
     private static final String USER_PREFIX = "/users/";
     private final UserService userService;
-    private final ProductService productService;
     private final ObjectMapper objectMapper;
 
-    public UserHandler(UserService userService,
-                       ProductService productService,
-                       ObjectMapper objectMapper) {
+    public UserHandler(UserService userService, ObjectMapper objectMapper) {
         this.userService = userService;
-        this.productService = productService;
         this.objectMapper = objectMapper;
     }
 
@@ -83,14 +78,6 @@ public class UserHandler implements HttpHandler {
                 String userId = pathParts[0];
                 User user = userService.findById(UUID.fromString(userId));
                 sendOkResponse(user, exchange);
-            } else if (pathParts.length == 2) {
-                String userId = pathParts[0];
-                String updates = pathParts[1];
-                if (updates.equals("updates")) {
-                    productService.checkForUpdates(UUID.fromString(userId));
-                } else {
-                    exchange.sendResponseHeaders(400, -1);
-                }
             } else {
                 exchange.sendResponseHeaders(400, -1);
             }

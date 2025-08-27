@@ -78,15 +78,6 @@ public class CheckerServiceClientImpl implements CheckerServiceClient {
         }
     }
 
-    @Override
-    public void checkForUpdates(UUID checkerUserId) {
-        try {
-            sendGetRequest("/users/%s/updates".formatted(checkerUserId), null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private String sendGetRequest(String endpoint, Map<String, String> queryParams) throws IOException {
         StringBuilder urlWithParams = new StringBuilder(parameters.baseUrl() + endpoint);
 
