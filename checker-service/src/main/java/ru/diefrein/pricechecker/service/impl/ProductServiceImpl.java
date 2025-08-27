@@ -74,24 +74,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void checkForUpdates(UUID userId) {
-        userRepository.findById(userId);
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
-            try {
-                processUserProducts(conn, userId);
-                conn.commit();
-            } catch (Exception e) {
-                conn.rollback();
-                log.error("Transaction rolled back due to exception", e);
-                throw new RuntimeException(e);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public Page<Product> findByUserId(UUID userId, PageRequest pageRequest) {
         return productRepository.findByUserId(userId, pageRequest);
     }
