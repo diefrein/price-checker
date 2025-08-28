@@ -14,9 +14,12 @@ import java.util.UUID;
 public class RemoveSubscriptionProcessor implements CommandProcessor {
 
     private final SubscriptionService subscriptionService;
+    private final SubscriptionsProcessor subscriptionsProcessor;
 
-    public RemoveSubscriptionProcessor(SubscriptionService subscriptionService) {
+    public RemoveSubscriptionProcessor(SubscriptionService subscriptionService,
+                                       SubscriptionsProcessor subscriptionsProcessor) {
         this.subscriptionService = subscriptionService;
+        this.subscriptionsProcessor = subscriptionsProcessor;
     }
 
     @Override
@@ -31,6 +34,8 @@ public class RemoveSubscriptionProcessor implements CommandProcessor {
                 ProcessableCommandType.REMOVE_SUBSCRIPTION.name().concat("_")
         );
         subscriptionService.remove(UUID.fromString(productId));
-        return ProcessResult.toInitialState(BotParameterProvider.REMOVE_SUBSCRIPTION_RESPONSE);
+
+        // todo temporary solution - refactor to ChainedCommandProcessor to execute multiple commands per message
+        return subscriptionsProcessor.process(command, state);
     }
 }

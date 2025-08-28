@@ -87,6 +87,7 @@ public class Application {
                                                                                UserService userService,
                                                                                ObjectMapper objectMapper) {
         Map<ProcessableCommandType, CommandProcessor> processors = new ConcurrentHashMap<>();
+        SubscriptionsProcessor subscriptionsProcessor = new SubscriptionsProcessor(subscriptionService, objectMapper);
         processors.put(ProcessableCommandType.START,
                 new StartProcessor());
         processors.put(ProcessableCommandType.REGISTER,
@@ -94,9 +95,9 @@ public class Application {
         processors.put(ProcessableCommandType.SUBSCRIBE,
                 new SubscribeProcessor(subscriptionService));
         processors.put(ProcessableCommandType.SUBSCRIPTIONS,
-                new SubscriptionsProcessor(subscriptionService, objectMapper));
+                subscriptionsProcessor);
         processors.put(ProcessableCommandType.REMOVE_SUBSCRIPTION,
-                new RemoveSubscriptionProcessor(subscriptionService));
+                new RemoveSubscriptionProcessor(subscriptionService, subscriptionsProcessor));
         processors.put(ProcessableCommandType.CHECK_SUBSCRIPTION_UPDATES,
                 new CheckSubscriptionUpdatesProcessor(subscriptionService));
         return processors;
